@@ -37,9 +37,9 @@ export const FLASHES: readonly Flash[] = [
 
 /** Tiempos aprobados (ms). */
 export const TIMINGS = {
-  /** Fase 1 "Hello." total (fade-in + hold + fade-out horneados en CSS). */
+  /** Fase 1 "Hello." total. El montaje sigue arrancando en phase1Total + phase2AnchorIn. */
   phase1Total: 1000,
-  /** Fade-in del ancla "WE ARE SKLIO" antes del montaje. */
+  /** Ventana antes del montaje (se conserva: montaje arranca en 1150). */
   phase2AnchorIn: 150,
   /** Duración de cada flash de imagen (cut/swap rápido). */
   flash: 300,
@@ -49,6 +49,16 @@ export const TIMINGS = {
   reveal: 350,
   /** Duración mínima de la identidad estática en reduced-motion. */
   reducedHold: 900,
+
+  /* --- Crossfade en el MISMO anclaje entre "Hello." y "WE ARE SKLIO" --- */
+  /** Momento en que "Hello." empieza a aparecer (tras el primer paint). */
+  helloFadeInAt: 20,
+  /** Momento del crossfade: "Hello." se desvanece y "WE ARE SKLIO" aparece A LA VEZ,
+      con la misma duración, de modo que ambos son visibles durante toda la transición
+      (solape real y corto en el mismo punto de anclaje, sin hueco). */
+  crossfadeAt: 850,
+  /** Duración de la transición de opacidad de cada texto (crossfade sutil). */
+  textFade: 250,
 } as const;
 
 /**

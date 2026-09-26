@@ -6,8 +6,6 @@
   inset: 0;
   /* Overlay por encima de todo (valor de implementación, no un token del DS). */
   z-index: 9999;
-  display: grid;
-  place-items: center;
   opacity: 1;
   transition: opacity var(--reveal-dur, 350ms) ease;
 }
@@ -17,67 +15,51 @@
   opacity: 0;
 }
 
-/* ===== Fase 1: "Hello." ===== */
-/* Hereda 20/28 + familia editorial (Hiragino → serif) del DS.
-   Excepción local: letter-spacing -6%. */
-.hello {
-  margin: 0;
-  letter-spacing: -0.06em;
-  animation: helloCycle 1000ms ease forwards;
-}
-
-/* fade-in (~200ms) → hold (~550ms) → fade-out (~200ms) dentro de 1000ms. */
-@keyframes helloCycle {
-  0% {
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  75% {
-    opacity: 1;
-  }
-  95% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-/* ===== Fase 2: "WE ARE SKLIO" + montaje ===== */
 .stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
 }
 
-/* Ancla estable. Excepción tipográfica local del Loading (Figma 476:5319):
-   Montserrat Medium 500, 20px, line-height normal, -6%, uppercase. */
+/* ===== Anclaje compartido =====
+   Punto único (0×0) centrado en el viewport. "Hello." y "WE ARE SKLIO" se
+   posicionan sobre ESTE mismo punto, superpuestos, para que ocupen el mismo
+   anclaje visual y crucen (crossfade) en el mismo lugar, sin salto. */
 .anchor {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  margin: 0;
   z-index: 2; /* siempre por encima de las imágenes: el texto nunca se oculta */
+}
+
+/* Ambos textos centrados exactamente sobre el punto de anclaje. */
+.anchorText {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  white-space: nowrap;
+  /* Crossfade sutil y editorial: solo opacidad (sin slide/scale/blur/bounce). */
+  transition: opacity var(--text-fade, 250ms) ease;
+  will-change: opacity;
+}
+
+/* "Hello.": hereda 20/28 + familia editorial (Hiragino → serif) del DS.
+   Excepción local: letter-spacing -6%. */
+.hello {
+  letter-spacing: -0.06em;
+}
+
+/* "WE ARE SKLIO": excepción tipográfica local del Loading (Figma 476:5319):
+   Montserrat Medium 500, 20px, line-height normal, -6%, uppercase. */
+.sklio {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-medium);
   font-size: 20px;
   line-height: normal;
   letter-spacing: -0.06em;
   text-transform: uppercase;
-  white-space: nowrap;
-  animation: anchorIn 150ms ease forwards;
-}
-
-@keyframes anchorIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 /* Tile de imagen (referencia Figma: 109×109, fondo blanco, cover). */
@@ -146,9 +128,7 @@
   }
 }
 
-/* Reduced motion: sin montaje ni flashes; identidad estática y fade simple. */
-.reduced .hello,
-.reduced .anchor {
-  animation: none;
-  opacity: 1;
+/* Reduced motion: sin montaje ni flashes; identidad estática sin transición. */
+.reduced .anchorText {
+  transition: none;
 }
