@@ -41,7 +41,7 @@ export type CircleTile = {
 
 export type CircleRow = {
   id: string;
-  tiles: CircleTile[];
+  tiles: readonly CircleTile[];
   /** Desktop: wide=16px pad, inset=228px pad, title=16px + logo. Mobile: centered overflow. */
   variant: "wide" | "inset" | "title";
 };
