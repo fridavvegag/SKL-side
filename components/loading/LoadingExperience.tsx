@@ -10,14 +10,15 @@ import {
 } from "./loadingSequence";
 
 /**
- * Loading (secuencia única, no loopea) — ritmo burocratik.com:
- *   1. Aparición suave del lockup [tile] + "WE ARE SKLIO"
- *   2. Tile con hard-cuts cada ~240ms; texto fijo
- *   3. Slide-away vertical del overlay; Hero ya arranca debajo
+ * Loading:
+ *   1. Pantalla negra unos segundos
+ *   2. Tile baja de arriba → abajo; "WE ARE SKLIO" sube de abajo → arriba
+ *   3. Tile loopea (hard cuts); texto fijo
+ *   4. Slide-away vertical; Hero arranca debajo
  */
 export function LoadingExperience() {
-  const [sklioVisible, setSklioVisible] = useState(false);
-  const [lockupSettled, setLockupSettled] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [settled, setSettled] = useState(false);
   const [loopIndex, setLoopIndex] = useState(0);
   const [reduced, setReduced] = useState(false);
   const [assetsReady, setAssetsReady] = useState(false);
@@ -63,6 +64,7 @@ export function LoadingExperience() {
     };
   }, []);
 
+  // Negro → entrada opuesta (tile↓ / texto↑) → settled.
   useEffect(() => {
     const isReduced =
       typeof window !== "undefined" &&
@@ -75,15 +77,15 @@ export function LoadingExperience() {
     };
 
     if (isReduced) {
-      setSklioVisible(true);
-      setLockupSettled(true);
+      setEntered(true);
+      setSettled(true);
       at(() => setSequenceComplete(true), TIMINGS.reducedHold);
     } else {
-      at(() => setSklioVisible(true), TIMINGS.appearAt);
+      at(() => setEntered(true), TIMINGS.blackHold);
       at(() => {
-        setLockupSettled(true);
+        setSettled(true);
         setSequenceComplete(true);
-      }, TIMINGS.appearAt + TIMINGS.appear + TIMINGS.phase2Hold);
+      }, TIMINGS.blackHold + TIMINGS.appear + TIMINGS.textStagger + TIMINGS.phase2Hold);
     }
 
     return () => {
@@ -91,8 +93,9 @@ export function LoadingExperience() {
     };
   }, []);
 
+  // Loop de imagen solo cuando ya entró el lockup.
   useEffect(() => {
-    if (!sklioVisible || reduced || revealing || done) return;
+    if (!entered || reduced || revealing || done) return;
     if (LOOP_IMAGES.length <= 1) return;
 
     const id = window.setInterval(() => {
@@ -100,9 +103,8 @@ export function LoadingExperience() {
     }, TIMINGS.flash);
 
     return () => clearInterval(id);
-  }, [sklioVisible, reduced, revealing, done]);
+  }, [entered, reduced, revealing, done]);
 
-  // Start slide-away as soon as ready; notify Hero immediately so it plays under the panel.
   useEffect(() => {
     if (!sequenceComplete || !assetsReady || revealing || done) return;
     setRevealing(true);
@@ -130,23 +132,30 @@ export function LoadingExperience() {
       style={
         {
           "--appear-dur": `${TIMINGS.appear}ms`,
+          "--text-stagger": `${TIMINGS.textStagger}ms`,
           "--reveal-dur": `${TIMINGS.reveal}ms`,
         } as CSSProperties
       }
     >
       <div className={styles.stage}>
-        <div
-          className={`${styles.lockup} ${
-            sklioVisible ? styles.lockupVisible : ""
-          } ${lockupSettled ? styles.lockupSettled : ""}`}
-        >
+        <div className={styles.lockup}>
           {current && (
-            <div className={styles.tile}>
+            <div
+              className={`${styles.tile} ${entered ? styles.tileEnter : ""} ${
+                settled ? styles.tileSettled : ""
+              }`}
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={current.image} alt="" aria-hidden="true" />
             </div>
           )}
-          <p className={styles.sklio}>WE ARE SKLIO</p>
+          <p
+            className={`${styles.sklio} ${entered ? styles.sklioEnter : ""} ${
+              settled ? styles.sklioSettled : ""
+            }`}
+          >
+            WE ARE SKLIO
+          </p>
         </div>
       </div>
     </div>
