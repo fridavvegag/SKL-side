@@ -18,14 +18,6 @@
   min-width: 0;
 }
 
-.desktopOnly {
-  display: none;
-}
-
-.mobileOnly {
-  display: flex;
-}
-
 @media (min-width: 768px) {
   .grid {
     flex-direction: row;
@@ -35,14 +27,5 @@
 
   .column {
     flex: 1 1 0;
-    gap: var(--grid-gutter-mobile);
-  }
-
-  .desktopOnly {
-    display: flex;
-  }
-
-  .mobileOnly {
-    display: none;
   }
 }

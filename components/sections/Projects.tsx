@@ -15,21 +15,14 @@ export function Projects() {
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
-        <div className={`${styles.column} ${styles.desktopOnly}`}>
+        <div className={styles.column}>
           {col2.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
-        <div className={`${styles.column} ${styles.desktopOnly}`}>
+        <div className={styles.column}>
           {col3.map((project) => (
             <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
-
-        {/* Mobile: single column with all projects in visual order */}
-        <div className={`${styles.column} ${styles.mobileOnly}`}>
-          {[...col2, ...col3].map((project) => (
-            <ProjectCard key={`m-${project.id}`} project={project} />
           ))}
         </div>
       </div>

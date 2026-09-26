@@ -41,7 +41,7 @@ export function Header() {
         <button
           type="button"
           className={`${styles.menuButton} ${styles.mobileOnly}`}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-label="Menu"
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
           onClick={() => setMenuOpen((v) => !v)}

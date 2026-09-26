@@ -10,6 +10,15 @@
   background: var(--color-background);
 }
 
+/* Mobile Figma: header overlays the hero (both at top:0). */
+@media (max-width: 767px) {
+  .header {
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+}
+
 .link {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-medium);

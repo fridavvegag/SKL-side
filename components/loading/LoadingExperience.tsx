@@ -95,12 +95,17 @@ export function LoadingExperience() {
   }, []);
 
   // Transición al Home: solo cuando la secuencia mínima terminó Y los assets están listos.
+  // Separado en dos efectos para que el timeout de reveal no se limpie al setear `revealing`.
   useEffect(() => {
     if (!sequenceComplete || !assetsReady || revealing || done) return;
     setRevealing(true);
+  }, [sequenceComplete, assetsReady, revealing, done]);
+
+  useEffect(() => {
+    if (!revealing || done) return;
     const id = window.setTimeout(() => setDone(true), TIMINGS.reveal);
     return () => clearTimeout(id);
-  }, [sequenceComplete, assetsReady, revealing, done]);
+  }, [revealing, done]);
 
   if (done) return null;
 

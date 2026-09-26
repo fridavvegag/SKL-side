@@ -13,6 +13,7 @@
 /* Reveal/fade de salida hacia Home. */
 .revealOut {
   opacity: 0;
+  pointer-events: none;
 }
 
 .stage {
