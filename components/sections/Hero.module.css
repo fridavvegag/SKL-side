@@ -16,6 +16,33 @@
   position: absolute;
   inset: 0;
   background: #f2f2f2;
+  opacity: 0;
+  transform: scale(1.03);
+  filter: blur(6px);
+  transition:
+    opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 720ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+  z-index: 1;
+}
+
+.mediaEntered {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+/* Salida editorial del video hacia el texto. */
+.mediaExit {
+  opacity: 0;
+  transform: scale(1.02);
+  filter: blur(8px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
 }
 
 .media img,
@@ -36,6 +63,8 @@
   justify-content: center;
   padding: 0 var(--space-16);
   background: var(--color-background);
+  opacity: 0;
+  z-index: 2;
 }
 
 .headline {
@@ -48,6 +77,24 @@
   line-height: 1.073;
   letter-spacing: -0.06em;
   font-weight: var(--font-weight-regular);
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(14px);
+  transition:
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1) 80ms,
+    filter 900ms cubic-bezier(0.22, 1, 0.36, 1) 80ms,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1) 80ms;
+  will-change: opacity, filter, transform;
+}
+
+.textEntered {
+  opacity: 1;
+}
+
+.textEntered .headline {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
 }
 
 .line {
@@ -77,7 +124,18 @@
   letter-spacing: -0.06em;
   text-transform: uppercase;
   color: #ffffff;
-  z-index: 1;
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 500ms cubic-bezier(0.22, 1, 0.36, 1) 280ms,
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1) 280ms,
+    color 150ms ease;
+}
+
+.sessionEntered {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .session:hover {
@@ -125,5 +183,20 @@
   .session {
     right: calc(var(--space-16) * 2);
     bottom: var(--space-24);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .mediaEntered,
+  .mediaExit,
+  .headline,
+  .textEntered .headline,
+  .session,
+  .sessionEntered {
+    transition: none;
+    filter: none;
+    transform: none;
+    opacity: 1;
   }
 }

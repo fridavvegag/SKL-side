@@ -11,17 +11,14 @@ import {
 
 /**
  * Loading (secuencia única, no loopea):
- *   1. "Hello." fade-in breve
- *   2. Morph blur/fade → lockup [tile] + "WE ARE SKLIO" (Figma 476:5319)
- *   3. Texto y contenedor del tile quedan fijos; solo el src de la imagen
+ *   1. Aparición editorial del lockup [tile] + "WE ARE SKLIO" (Figma 476:5319)
+ *   2. Texto y contenedor del tile quedan fijos; solo el src de la imagen
  *      loopea cada ~300ms mientras se precarga Home
- *   4. Reveal hacia Home cuando la secuencia mínima terminó Y assets listos
+ *   3. Reveal editorial hacia Home cuando la secuencia mínima terminó Y assets listos
  *
  * Respeta prefers-reduced-motion (identidad estática, sin loop de imágenes).
  */
 export function LoadingExperience() {
-  const [helloVisible, setHelloVisible] = useState(false);
-  const [helloMorphing, setHelloMorphing] = useState(false);
   const [sklioVisible, setSklioVisible] = useState(false);
   const [lockupSettled, setLockupSettled] = useState(false);
   const [loopIndex, setLoopIndex] = useState(0);
@@ -70,7 +67,7 @@ export function LoadingExperience() {
     };
   }, []);
 
-  // Máquina de tiempos: Hello → morph → lockup estable (una sola vez).
+  // Aparición del lockup (una sola vez) → settled → secuencia mínima lista.
   useEffect(() => {
     const isReduced =
       typeof window !== "undefined" &&
@@ -87,17 +84,11 @@ export function LoadingExperience() {
       setLockupSettled(true);
       at(() => setSequenceComplete(true), TIMINGS.reducedHold);
     } else {
-      at(() => setHelloVisible(true), TIMINGS.helloFadeInAt);
-      at(() => {
-        setHelloMorphing(true);
-        setHelloVisible(false);
-        setSklioVisible(true);
-      }, TIMINGS.crossfadeAt);
-      // Tras el morph: texto/tile sin más transitions; secuencia mínima lista.
+      at(() => setSklioVisible(true), TIMINGS.appearAt);
       at(() => {
         setLockupSettled(true);
         setSequenceComplete(true);
-      }, TIMINGS.crossfadeAt + TIMINGS.textFade + TIMINGS.phase2Hold);
+      }, TIMINGS.appearAt + TIMINGS.appear + TIMINGS.phase2Hold);
     }
 
     return () => {
@@ -105,7 +96,7 @@ export function LoadingExperience() {
     };
   }, []);
 
-  // Solo el contenido del tile loopea (contenedor fijo). No reinicia Hello/morph.
+  // Solo el contenido del tile loopea (contenedor fijo).
   useEffect(() => {
     if (!sklioVisible || reduced || revealing || done) return;
     if (LOOP_IMAGES.length <= 1) return;
@@ -146,28 +137,16 @@ export function LoadingExperience() {
       aria-label="Loading"
       style={
         {
-          "--text-fade": `${TIMINGS.textFade}ms`,
+          "--appear-dur": `${TIMINGS.appear}ms`,
           "--reveal-dur": `${TIMINGS.reveal}ms`,
         } as CSSProperties
       }
     >
       <div className={styles.stage}>
-        {!reduced && !lockupSettled && (
-          <p
-            className={`text-body-large text-editorial ${styles.hello} ${
-              helloVisible ? styles.helloVisible : ""
-            } ${helloMorphing ? styles.helloMorphOut : ""}`}
-            aria-hidden={sklioVisible}
-          >
-            Hello.
-          </p>
-        )}
-
         <div
           className={`${styles.lockup} ${
             sklioVisible ? styles.lockupVisible : ""
           } ${lockupSettled ? styles.lockupSettled : ""}`}
-          aria-hidden={!sklioVisible}
         >
           {current && (
             <div className={styles.tile}>

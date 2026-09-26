@@ -1,12 +1,11 @@
 /**
  * Configuración determinista de la experiencia de Loading.
  *
- * Fuente de verdad: Figma 328:4831 ("Hello.") y 476:5319
- * ([tile 109×109] + "WE ARE SKLIO", gap 6px). Design System para tipografía.
+ * Fuente de verdad: Figma 476:5319 ([tile 109×109] + "WE ARE SKLIO", gap 6px).
  *
  * Secuencia (NO loopea):
- *   Hello. → morph → lockup estable
- * Solo el contenido del tile de proyecto loopea (~300ms) mientras se precarga Home.
+ *   Appearance editorial del lockup → tile estable con loop de imagen
+ * Solo el contenido del tile loopea (~300ms) mientras se precarga Home.
  */
 
 import { homeEssentialAssets } from "@/content/home";
@@ -38,20 +37,18 @@ export const FLASHES = LOOP_IMAGES;
 
 /** Tiempos aprobados (ms). */
 export const TIMINGS = {
-  /** Momento en que "Hello." empieza a aparecer (tras el primer paint). */
-  helloFadeInAt: 20,
-  /** Morph: "Hello." → "WE ARE SKLIO" (+ tile). Una sola vez. */
-  crossfadeAt: 850,
-  /** Duración del morph (opacidad + blur sutil). */
-  textFade: 250,
+  /** Momento en que el lockup empieza a aparecer. */
+  appearAt: 40,
+  /** Duración de la aparición editorial (blur + fade + settle). */
+  appear: 560,
   /** Hold mínimo con lockup estable antes de permitir reveal (si assets listos). */
-  phase2Hold: 250,
+  phase2Hold: 400,
   /** Intervalo de swap del tile de proyecto (solo la imagen loopea). */
   flash: 300,
   /** Reveal/fade de salida hacia Home. */
-  reveal: 350,
+  reveal: 480,
   /** Duración mínima de la identidad estática en reduced-motion. */
-  reducedHold: 900,
+  reducedHold: 700,
 } as const;
 
 /**

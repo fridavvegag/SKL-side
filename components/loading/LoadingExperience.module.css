@@ -7,12 +7,13 @@
   /* Overlay por encima de todo (valor de implementación, no un token del DS). */
   z-index: 9999;
   opacity: 1;
-  transition: opacity var(--reveal-dur, 350ms) ease;
+  transition: opacity var(--reveal-dur, 480ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Reveal/fade de salida hacia Home. */
+/* Reveal editorial hacia Home: fade + leve blur. */
 .revealOut {
   opacity: 0;
+  filter: blur(4px);
   pointer-events: none;
 }
 
@@ -21,53 +22,25 @@
   inset: 0;
 }
 
-/* ===== Fase 1: "Hello." centrado (mismo punto visual que el lockup) ===== */
-.hello {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  white-space: nowrap;
-  letter-spacing: -0.06em;
-  opacity: 0;
-  filter: blur(0);
-  transition:
-    opacity var(--text-fade, 250ms) ease,
-    filter var(--text-fade, 250ms) ease;
-  will-change: opacity, filter;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.helloVisible {
-  opacity: 1;
-  filter: blur(0);
-}
-
-.helloMorphOut {
-  opacity: 0;
-  filter: blur(6px);
-}
-
-/* ===== Fase 2: lockup fijo [tile] + WE ARE SKLIO (Figma 476:5319) =====
-   Grupo centrado. Una vez visible/settled: sin mover ni re-animar.
-   Solo cambia el src dentro del tile. */
+/* Lockup fijo [tile] + WE ARE SKLIO (Figma 476:5319).
+   Aparición editorial: fade + soft blur + leve settle vertical.
+   Una vez settled: sin mover ni re-animar; solo cambia el src del tile. */
 .lockup {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 6px;
   opacity: 0;
-  filter: blur(6px);
+  filter: blur(10px);
+  transform: translate(-50%, calc(-50% + 10px));
   transition:
-    opacity var(--text-fade, 250ms) ease,
-    filter var(--text-fade, 250ms) ease;
-  will-change: opacity, filter;
+    opacity var(--appear-dur, 560ms) cubic-bezier(0.22, 1, 0.36, 1),
+    filter var(--appear-dur, 560ms) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--appear-dur, 560ms) cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, filter, transform;
   pointer-events: none;
   z-index: 1;
 }
@@ -75,9 +48,9 @@
 .lockupVisible {
   opacity: 1;
   filter: blur(0);
+  transform: translate(-50%, -50%);
 }
 
-/* Tras el morph: sin transición — texto/contenedor quedan estables. */
 .lockupSettled {
   transition: none;
   will-change: auto;
@@ -113,17 +86,19 @@
   color: inherit;
 }
 
-/* Mobile: same Figma lockup dimensions (109×109 tile, 20px type). */
 @media (max-width: 767px) {
   .lockup {
-    /* Keep Figma tile size; allow slight horizontal squeeze via scale if needed */
     max-width: 100%;
   }
 }
 
-/* Reduced motion: sin morph ni loop; identidad estática. */
-.reduced .hello,
+/* Reduced motion: aparición instantánea, sin loop. */
 .reduced .lockup {
   transition: none;
+  filter: none;
+  transform: translate(-50%, -50%);
+}
+
+.reduced .revealOut {
   filter: none;
 }
