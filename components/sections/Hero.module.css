@@ -12,10 +12,39 @@
   max-height: none;
 }
 
+/* Hero video — revealed under the sliding loader (Büro-style).
+   Soft scale settle; light blur clear as the panel leaves. */
 .media {
   position: absolute;
   inset: 0;
-  background: #f2f2f2;
+  background: #0a0a0a;
+  opacity: 0;
+  transform: scale(1.04);
+  filter: blur(10px);
+  transition:
+    opacity 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 1200ms cubic-bezier(0.76, 0, 0.24, 1),
+    filter 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform, filter;
+  z-index: 1;
+}
+
+.mediaEntered {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+}
+
+/* Video → text: soft dissolve, same family of easings. */
+.mediaExit {
+  opacity: 0;
+  transform: scale(1.015);
+  filter: blur(12px);
+  transition:
+    opacity 850ms cubic-bezier(0.76, 0, 0.24, 1),
+    transform 850ms cubic-bezier(0.76, 0, 0.24, 1),
+    filter 850ms cubic-bezier(0.76, 0, 0.24, 1);
+  pointer-events: none;
 }
 
 .media img,
@@ -36,6 +65,9 @@
   justify-content: center;
   padding: 0 var(--space-16);
   background: var(--color-background);
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 200ms linear;
 }
 
 .headline {
@@ -43,18 +75,34 @@
   width: 100%;
   text-align: center;
   color: var(--color-text-primary);
-  /* Mobile Figma: 64px, LH 1.073, tracking -6% */
   font-size: 64px;
   line-height: 1.073;
   letter-spacing: -0.06em;
   font-weight: var(--font-weight-regular);
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(18px);
+  transition:
+    opacity 900ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 60ms,
+    filter 1000ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 60ms,
+    transform 1000ms cubic-bezier(0.76, 0, 0.24, 1) 60ms;
+  will-change: opacity, filter, transform;
+}
+
+.textEntered {
+  opacity: 1;
+}
+
+.textEntered .headline {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
 }
 
 .line {
   display: block;
 }
 
-/* Mobile-only breaks → 5 lines (Figma 328:4887). Hidden on desktop. */
 .mobileBr {
   display: block;
 }
@@ -77,7 +125,18 @@
   letter-spacing: -0.06em;
   text-transform: uppercase;
   color: #ffffff;
-  z-index: 1;
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 550ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 420ms,
+    transform 550ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 420ms,
+    color 150ms ease;
+}
+
+.sessionEntered {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .session:hover {
@@ -95,7 +154,6 @@
     height: 879px;
     max-height: none;
     min-height: 0;
-    /* Figma: media inset 16px from sides on desktop frame width */
     padding: 0 var(--space-16);
   }
 
@@ -113,7 +171,6 @@
   }
 
   .headline {
-    /* Desktop Figma: 128px, LH 1.073, tracking -6% */
     font-size: 128px;
     white-space: nowrap;
   }
@@ -125,5 +182,21 @@
   .session {
     right: calc(var(--space-16) * 2);
     bottom: var(--space-24);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .mediaEntered,
+  .mediaExit,
+  .headline,
+  .textEntered .headline,
+  .session,
+  .sessionEntered,
+  .textScreen {
+    transition: none;
+    filter: none;
+    transform: none;
+    opacity: 1;
   }
 }

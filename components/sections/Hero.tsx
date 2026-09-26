@@ -10,9 +10,15 @@ type Phase = "waiting" | "video" | "text";
 /** If playback never starts (autoplay/codec), fall through to text. */
 const PLAYBACK_STALL_MS = 1500;
 
+/** Crossfade video → text (ms), aligned with Büro-like dissolve. */
+const TEXT_CROSSFADE_MS = 850;
+
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [phase, setPhase] = useState<Phase>("waiting");
+  const [videoEntered, setVideoEntered] = useState(false);
+  const [textEntered, setTextEntered] = useState(false);
+  const [videoExiting, setVideoExiting] = useState(false);
 
   // Tras el Loading: arrancar video una vez (o saltar a texto si reduced-motion).
   useEffect(() => {
@@ -22,9 +28,11 @@ export function Hero() {
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduced) {
         setPhase("text");
+        requestAnimationFrame(() => setTextEntered(true));
         return;
       }
       setPhase("video");
+      requestAnimationFrame(() => setVideoEntered(true));
     };
 
     window.addEventListener(LOADING_COMPLETE_EVENT, startAfterLoading);
@@ -33,14 +41,16 @@ export function Hero() {
     };
   }, []);
 
-  // Play once when entering video phase; on ended → text screen.
+  // Play once when entering video phase; on ended → editorial text reveal.
   useEffect(() => {
     if (phase !== "video") return;
     const video = videoRef.current;
     if (!video) return;
 
     let cancelled = false;
+    let exiting = false;
     let stallTimer = 0;
+    let exitTimer = 0;
 
     video.muted = true;
     video.defaultMuted = true;
@@ -48,7 +58,14 @@ export function Hero() {
     video.playsInline = true;
 
     const goText = () => {
-      if (!cancelled) setPhase("text");
+      if (cancelled || exiting) return;
+      exiting = true;
+      setVideoExiting(true);
+      setPhase("text");
+      requestAnimationFrame(() => setTextEntered(true));
+      exitTimer = window.setTimeout(() => {
+        if (!cancelled) setVideoExiting(false);
+      }, TEXT_CROSSFADE_MS);
     };
 
     const clearStall = () => {
@@ -62,7 +79,6 @@ export function Hero() {
       clearStall();
       stallTimer = window.setTimeout(() => {
         if (cancelled) return;
-        // Still no progress → skip to static hero.
         if (video.paused || video.currentTime < 0.05) goText();
       }, PLAYBACK_STALL_MS);
     };
@@ -89,7 +105,6 @@ export function Hero() {
           err && typeof err === "object" && "name" in err
             ? String((err as { name: string }).name)
             : "";
-        // Strict Mode cleanup aborts the first play(); ignore that.
         if (name === "AbortError") return;
         goText();
       });
@@ -101,6 +116,7 @@ export function Hero() {
     return () => {
       cancelled = true;
       clearStall();
+      if (exitTimer) window.clearTimeout(exitTimer);
       video.removeEventListener("ended", onEnded);
       video.removeEventListener("error", onError);
       video.removeEventListener("playing", onPlaying);
@@ -109,13 +125,22 @@ export function Hero() {
     };
   }, [phase]);
 
+  const showVideo = phase === "video" || videoExiting;
+
   return (
     <section
-      className={`${styles.hero} ${phase === "text" ? styles.heroText : ""}`}
+      className={`${styles.hero} ${
+        phase === "text" || videoExiting ? styles.heroText : ""
+      }`}
       aria-label="Hero"
     >
-      {phase !== "text" && (
-        <div className={styles.media} aria-hidden={phase === "waiting"}>
+      {showVideo && (
+        <div
+          className={`${styles.media} ${
+            videoEntered && !videoExiting ? styles.mediaEntered : ""
+          } ${videoExiting ? styles.mediaExit : ""}`}
+          aria-hidden={phase !== "video"}
+        >
           <video
             ref={videoRef}
             className={styles.video}
@@ -129,13 +154,16 @@ export function Hero() {
         </div>
       )}
 
-      {phase === "text" && (
-        <div className={styles.textScreen}>
+      {(phase === "text" || videoExiting) && (
+        <div
+          className={`${styles.textScreen} ${
+            textEntered ? styles.textEntered : ""
+          }`}
+        >
           <h1 className={`text-editorial ${styles.headline}`}>
             {/*
               Desktop (Figma 328:4884): two lines.
               Mobile (Figma 328:4887): five lines via mobile-only breaks.
-              Double space after "An" matches Figma copy.
             */}
             <span className={styles.line}>
               An{"\u00A0\u00A0"}
@@ -156,8 +184,13 @@ export function Hero() {
         </div>
       )}
 
-      {phase === "video" && (
-        <a className={styles.session} href={hero.sessionHref}>
+      {phase === "video" && !videoExiting && (
+        <a
+          className={`${styles.session} ${
+            videoEntered ? styles.sessionEntered : ""
+          }`}
+          href={hero.sessionHref}
+        >
           <span>{hero.sessionLabel}</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

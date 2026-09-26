@@ -1,40 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import styles from "./LoadingExperience.module.css";
 import {
-  FLASHES,
   LOADING_COMPLETE_EVENT,
+  LOOP_IMAGES,
   PRELOAD_ASSETS,
   TIMINGS,
 } from "./loadingSequence";
 
 /**
- * Experiencia de Loading en dos fases (una sola experiencia, sin cambio de ruta):
- *   Fase 1: "Hello." (minimal, negro/blanco)
- *   Fase 2: "WE ARE SKLIO" como ancla estable + montaje editorial de imágenes
- *   Reveal: fade corto y limpio hacia el Home ya renderizado debajo.
- *
- * "Hello." y "WE ARE SKLIO" comparten EXACTAMENTE el mismo punto de anclaje
- * (mismo contenedor centrado, superpuestos). La transición es un crossfade corto
- * y simultáneo en el mismo lugar: en un mismo instante "Hello." se desvanece y
- * "WE ARE SKLIO" aparece, con la misma duración, así que ambos son visibles
- * durante toda la transición (solape real, sin hueco ni salto de posición).
- *
- * Respeta prefers-reduced-motion y precarga los assets esenciales, transicionando
- * solo cuando la secuencia mínima terminó Y los assets están listos.
+ * Loading:
+ *   1. Pantalla negra unos segundos
+ *   2. Tile baja de arriba → abajo; "WE ARE SKLIO" sube de abajo → arriba
+ *   3. Tile loopea (hard cuts); texto fijo
+ *   4. Slide-away vertical; Hero arranca debajo
  */
 export function LoadingExperience() {
-  const [helloVisible, setHelloVisible] = useState(false);
-  const [sklioVisible, setSklioVisible] = useState(false);
-  const [flashIndex, setFlashIndex] = useState(-1);
+  const [entered, setEntered] = useState(false);
+  const [settled, setSettled] = useState(false);
+  const [loopIndex, setLoopIndex] = useState(0);
   const [reduced, setReduced] = useState(false);
   const [assetsReady, setAssetsReady] = useState(false);
   const [sequenceComplete, setSequenceComplete] = useState(false);
   const [revealing, setRevealing] = useState(false);
   const [done, setDone] = useState(false);
 
-  // Precarga de assets esenciales (imágenes + video del Hero).
   useEffect(() => {
     if (PRELOAD_ASSETS.length === 0) {
       setAssetsReady(true);
@@ -52,13 +43,13 @@ export function LoadingExperience() {
         video.preload = "auto";
         video.muted = true;
         video.playsInline = true;
-        const done = () => {
-          video.removeEventListener("loadeddata", done);
-          video.removeEventListener("error", done);
+        const onDone = () => {
+          video.removeEventListener("loadeddata", onDone);
+          video.removeEventListener("error", onDone);
           finish();
         };
-        video.addEventListener("loadeddata", done);
-        video.addEventListener("error", done);
+        video.addEventListener("loadeddata", onDone);
+        video.addEventListener("error", onDone);
         video.src = src;
         video.load();
       } else {
@@ -73,7 +64,7 @@ export function LoadingExperience() {
     };
   }, []);
 
-  // Máquina de tiempos de la secuencia.
+  // Negro → entrada opuesta (tile↓ / texto↑) → settled.
   useEffect(() => {
     const isReduced =
       typeof window !== "undefined" &&
@@ -86,28 +77,15 @@ export function LoadingExperience() {
     };
 
     if (isReduced) {
-      // Versión estática y breve de la identidad, sin montaje ni flashes.
-      setSklioVisible(true);
-      setFlashIndex(-1);
+      setEntered(true);
+      setSettled(true);
       at(() => setSequenceComplete(true), TIMINGS.reducedHold);
     } else {
-      // Fase 1 → crossfade simultáneo → Fase 2, sobre el mismo anclaje.
-      at(() => setHelloVisible(true), TIMINGS.helloFadeInAt); // fade-in "Hello."
+      at(() => setEntered(true), TIMINGS.blackHold);
       at(() => {
-        // En el mismo instante: "Hello." fade-out y "WE ARE SKLIO" fade-in.
-        setHelloVisible(false);
-        setSklioVisible(true);
-      }, TIMINGS.crossfadeAt);
-
-      // Montaje (sin cambios): arranca en phase1Total + phase2AnchorIn = 1150.
-      const montageStart = TIMINGS.phase1Total + TIMINGS.phase2AnchorIn;
-      FLASHES.forEach((_, i) => {
-        at(() => setFlashIndex(i), montageStart + i * TIMINGS.flash);
-      });
-
-      const montageEnd = montageStart + FLASHES.length * TIMINGS.flash;
-      at(() => setFlashIndex(-1), montageEnd); // hold final solo con el ancla
-      at(() => setSequenceComplete(true), montageEnd + TIMINGS.phase2Hold);
+        setSettled(true);
+        setSequenceComplete(true);
+      }, TIMINGS.blackHold + TIMINGS.appear + TIMINGS.textStagger + TIMINGS.phase2Hold);
     }
 
     return () => {
@@ -115,25 +93,33 @@ export function LoadingExperience() {
     };
   }, []);
 
-  // Transición al Home: solo cuando la secuencia mínima terminó Y los assets están listos.
-  // Separado en dos efectos para que el timeout de reveal no se limpie al setear `revealing`.
+  // Loop de imagen solo cuando ya entró el lockup.
+  useEffect(() => {
+    if (!entered || reduced || revealing || done) return;
+    if (LOOP_IMAGES.length <= 1) return;
+
+    const id = window.setInterval(() => {
+      setLoopIndex((i) => (i + 1) % LOOP_IMAGES.length);
+    }, TIMINGS.flash);
+
+    return () => clearInterval(id);
+  }, [entered, reduced, revealing, done]);
+
   useEffect(() => {
     if (!sequenceComplete || !assetsReady || revealing || done) return;
     setRevealing(true);
+    window.dispatchEvent(new CustomEvent(LOADING_COMPLETE_EVENT));
   }, [sequenceComplete, assetsReady, revealing, done]);
 
   useEffect(() => {
     if (!revealing || done) return;
-    const id = window.setTimeout(() => {
-      setDone(true);
-      window.dispatchEvent(new CustomEvent(LOADING_COMPLETE_EVENT));
-    }, TIMINGS.reveal);
+    const id = window.setTimeout(() => setDone(true), TIMINGS.reveal);
     return () => clearTimeout(id);
   }, [revealing, done]);
 
   if (done) return null;
 
-  const current = flashIndex >= 0 ? FLASHES[flashIndex] : null;
+  const current = LOOP_IMAGES[loopIndex] ?? LOOP_IMAGES[0];
 
   return (
     <div
@@ -143,32 +129,30 @@ export function LoadingExperience() {
       role="status"
       aria-live="polite"
       aria-label="Loading"
+      style={
+        {
+          "--appear-dur": `${TIMINGS.appear}ms`,
+          "--text-stagger": `${TIMINGS.textStagger}ms`,
+          "--reveal-dur": `${TIMINGS.reveal}ms`,
+        } as CSSProperties
+      }
     >
       <div className={styles.stage}>
-        {!reduced && current && (
-          <div
-            key={`${flashIndex}-${current.project}`}
-            className={`${styles.tile} ${styles[current.slot]}`}
-          >
-            {/* Imagen decorativa del montaje editorial (object-fit: cover). */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={current.image} alt="" aria-hidden="true" />
-          </div>
-        )}
-
-        {/* Anclaje compartido: ambos textos ocupan EXACTAMENTE el mismo punto. */}
-        <div className={styles.anchor}>
-          {!reduced && (
-            <p
-              className={`text-body-large text-editorial ${styles.anchorText} ${styles.hello}`}
-              style={{ opacity: helloVisible ? 1 : 0 }}
+        <div className={styles.lockup}>
+          {current && (
+            <div
+              className={`${styles.tile} ${entered ? styles.tileEnter : ""} ${
+                settled ? styles.tileSettled : ""
+              }`}
             >
-              Hello.
-            </p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={current.image} alt="" aria-hidden="true" />
+            </div>
           )}
           <p
-            className={`${styles.anchorText} ${styles.sklio}`}
-            style={{ opacity: sklioVisible ? 1 : 0 }}
+            className={`${styles.sklio} ${entered ? styles.sklioEnter : ""} ${
+              settled ? styles.sklioSettled : ""
+            }`}
           >
             WE ARE SKLIO
           </p>
