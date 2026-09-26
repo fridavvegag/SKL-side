@@ -128,6 +128,17 @@
 }
 
 /* ==========================================================================
+   Utilidades
+   ========================================================================== */
+/* Inversión local blanco/negro (roles de color reversados) para tratamientos
+   puntuales cuando Figma lo especifica (p. ej. Loading Screen). NO es un dark
+   mode global: solo aplica dentro del scope donde se use. */
+.surface-inverted {
+  background-color: var(--color-text-primary); /* #000000 */
+  color: var(--color-background); /* #FFFFFF */
+}
+
+/* ==========================================================================
    Base
    ========================================================================== */
 body {

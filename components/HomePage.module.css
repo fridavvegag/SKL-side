@@ -1,0 +1,42 @@
+.main {
+  position: relative;
+  min-height: 100svh;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+/* Section spacing from Figma Home frames (not a global token). */
+.afterHero {
+  padding-top: var(--space-40);
+}
+
+.afterProjects {
+  /* Mobile: Projects ends ~3052, then WWD — approximate generous gap */
+  padding-top: var(--space-80);
+}
+
+.afterWhatWeDo {
+  padding-top: var(--space-80);
+}
+
+.afterCircle {
+  padding-top: var(--space-80);
+}
+
+@media (min-width: 768px) {
+  .afterHero {
+    padding-top: var(--space-40); /* 959 - (40+879) = 40 */
+  }
+
+  .afterProjects {
+    padding-top: 200px; /* 3167 - (959+2008) = 200 — explicit from Figma */
+  }
+
+  .afterWhatWeDo {
+    padding-top: 267px; /* 4807 - (3167+1373) = 267 — explicit from Figma */
+  }
+
+  .afterCircle {
+    padding-top: 258px; /* 6541 - (4807+1476) = 258 — explicit from Figma */
+  }
+}
