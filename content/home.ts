@@ -60,13 +60,17 @@ export const mobileMenuLinks = [
 ] as const;
 
 /**
- * Hero — Figma Sections/Hero VIDEO fill (CROP).
- * Source: /public/assets/videos/home-hero.mp4
+ * Hero sequence — Loading → VIDEO (once) → Hero-Text-Screen.
+ * Video: /public/assets/videos/home-hero.mp4
+ * Text: Figma Desktop 328:4884 / Mobile 328:4887
  */
 export const hero = {
   media: "/assets/videos/home-hero.mp4",
   sessionLabel: "skl session",
   sessionHref: "#session",
+  /** Double space after "An" matches Figma copy. */
+  textLine1: "An  independent creative",
+  textLine2: "studio in Mexico City",
 } as const;
 
 /**

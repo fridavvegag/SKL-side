@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import styles from "./LoadingExperience.module.css";
-import { FLASHES, PRELOAD_ASSETS, TIMINGS } from "./loadingSequence";
+import {
+  FLASHES,
+  LOADING_COMPLETE_EVENT,
+  PRELOAD_ASSETS,
+  TIMINGS,
+} from "./loadingSequence";
 
 /**
  * Experiencia de Loading en dos fases (una sola experiencia, sin cambio de ruta):
@@ -119,7 +124,10 @@ export function LoadingExperience() {
 
   useEffect(() => {
     if (!revealing || done) return;
-    const id = window.setTimeout(() => setDone(true), TIMINGS.reveal);
+    const id = window.setTimeout(() => {
+      setDone(true);
+      window.dispatchEvent(new CustomEvent(LOADING_COMPLETE_EVENT));
+    }, TIMINGS.reveal);
     return () => clearTimeout(id);
   }, [revealing, done]);
 
