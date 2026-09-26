@@ -2,14 +2,20 @@
   "name": "skl-site",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
-  "description": "SKL site",
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 5173",
-    "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 4173"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^16.3.6",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "vite": "^7.1.5"
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
   }
 }

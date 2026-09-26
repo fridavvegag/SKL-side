@@ -1,6 +1,6 @@
 # skl site
 
-A modern static site starter built with [Vite](https://vite.dev).
+A [Next.js](https://nextjs.org) project using TypeScript and the App Router.
 
 ## Requirements
 
@@ -11,18 +11,18 @@ A modern static site starter built with [Vite](https://vite.dev).
 
 ```bash
 npm install       # install dependencies
-npm run dev       # start the dev server at http://localhost:5173
-npm run build     # produce a production build in dist/
-npm run preview   # serve the production build at http://localhost:4173
+npm run dev       # start the dev server at http://localhost:3000
+npm run build     # create a production build
+npm run start     # serve the production build
 ```
 
 ## Project structure
 
 ```
-index.html        # HTML entry point
-src/main.js       # app entry, renders the landing page
-src/style.css     # styles
-public/           # static assets served as-is (e.g. favicon.svg)
+app/layout.tsx    # root layout
+app/page.tsx      # home page
+next.config.ts    # Next.js configuration
+tsconfig.json     # TypeScript configuration
 ```
 
 ## Cloud Agent environment
@@ -31,4 +31,4 @@ The Cloud Agent environment is configured in `.cursor/environment.json`:
 
 - `install` runs `npm install`
 - a `dev` terminal runs `npm run dev`
-- port `5173` (Vite dev server) is exposed
+- port `3000` (Next.js dev server) is exposed

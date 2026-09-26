@@ -9,8 +9,8 @@
   ],
   "ports": [
     {
-      "name": "vite-dev",
-      "port": 5173
+      "name": "next-dev",
+      "port": 3000
     }
   ]
 }
