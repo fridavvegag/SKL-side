@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { sklCircle, type CircleRow, type CircleTile } from "@/content/home";
 import styles from "./SklCircle.module.css";
 
@@ -40,33 +43,34 @@ function rowClass(variant: CircleRow["variant"]) {
   return `${styles.row} ${styles.rowWide}`;
 }
 
-function DesktopCollage() {
+function Collage({
+  rows,
+  mode,
+  hidden,
+}: {
+  rows: readonly CircleRow[];
+  mode: "desktop" | "mobile";
+  hidden: boolean;
+}) {
   return (
-    <div className={`${styles.collage} ${styles.desktop}`}>
-      {sklCircle.desktop.rows.map((row) => (
+    <div
+      className={`${styles.collage} ${
+        mode === "desktop" ? styles.desktop : styles.mobile
+      }`}
+      aria-hidden={hidden}
+    >
+      {rows.map((row) => (
         <div key={row.id} className={rowClass(row.variant)}>
           {row.variant === "title" ? (
-            <>
-              <Tile tile={row.tiles[0]} />
+            mode === "desktop" ? (
+              <>
+                <Tile tile={row.tiles[0]} />
+                <Title />
+                <Tile tile={row.tiles[1]} />
+              </>
+            ) : (
               <Title />
-              <Tile tile={row.tiles[1]} />
-            </>
-          ) : (
-            row.tiles.map((tile) => <Tile key={tile.id} tile={tile} />)
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MobileCollage() {
-  return (
-    <div className={`${styles.collage} ${styles.mobile}`}>
-      {sklCircle.mobile.rows.map((row) => (
-        <div key={row.id} className={rowClass(row.variant)}>
-          {row.variant === "title" ? (
-            <Title />
+            )
           ) : (
             row.tiles.map((tile) => <Tile key={tile.id} tile={tile} />)
           )}
@@ -77,10 +81,28 @@ function MobileCollage() {
 }
 
 export function SklCircle() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
   return (
     <section className={styles.section} aria-label="SKL Circle">
-      <DesktopCollage />
-      <MobileCollage />
+      <Collage
+        rows={sklCircle.desktop.rows}
+        mode="desktop"
+        hidden={!isDesktop}
+      />
+      <Collage
+        rows={sklCircle.mobile.rows}
+        mode="mobile"
+        hidden={isDesktop}
+      />
     </section>
   );
 }
