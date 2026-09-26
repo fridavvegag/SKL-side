@@ -68,9 +68,6 @@ export const hero = {
   media: "/assets/videos/home-hero.mp4",
   sessionLabel: "skl session",
   sessionHref: "#session",
-  /** Double space after "An" matches Figma copy. */
-  textLine1: "An  independent creative",
-  textLine2: "studio in Mexico City",
 } as const;
 
 /**

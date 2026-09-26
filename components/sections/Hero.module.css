@@ -41,7 +41,6 @@
 .headline {
   margin: 0;
   width: 100%;
-  max-width: 390px;
   text-align: center;
   color: var(--color-text-primary);
   /* Mobile Figma: 64px, LH 1.073, tracking -6% */
@@ -52,6 +51,11 @@
 }
 
 .line {
+  display: block;
+}
+
+/* Mobile-only breaks → 5 lines (Figma 328:4887). Hidden on desktop. */
+.mobileBr {
   display: block;
 }
 
@@ -109,10 +113,13 @@
   }
 
   .headline {
-    max-width: none;
     /* Desktop Figma: 128px, LH 1.073, tracking -6% */
     font-size: 128px;
     white-space: nowrap;
+  }
+
+  .mobileBr {
+    display: none;
   }
 
   .session {
