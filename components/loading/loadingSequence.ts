@@ -2,10 +2,11 @@
  * Configuración determinista de la experiencia de Loading.
  *
  * Fuente de verdad: Figma 476:5319 ([tile 109×109] + "WE ARE SKLIO", gap 6px).
+ * Motion reference: burocratik.com intro (soft appear + hard icon cuts +
+ * vertical slide-away reveal).
  *
  * Secuencia (NO loopea):
- *   Appearance editorial del lockup → tile estable con loop de imagen
- * Solo el contenido del tile loopea (~300ms) mientras se precarga Home.
+ *   Appearance del lockup → tile con loop de imagen → slide-away al Home
  */
 
 import { homeEssentialAssets } from "@/content/home";
@@ -35,25 +36,25 @@ export const LOOP_IMAGES: readonly LoopImage[] = [
 /** @deprecated Usar LOOP_IMAGES. Conservado por si hay imports residuales. */
 export const FLASHES = LOOP_IMAGES;
 
-/** Tiempos aprobados (ms). */
+/** Tiempos (ms) — ritmo cercano a burocratik.com. */
 export const TIMINGS = {
   /** Momento en que el lockup empieza a aparecer. */
-  appearAt: 40,
-  /** Duración de la aparición editorial (blur + fade + settle). */
-  appear: 560,
-  /** Hold mínimo con lockup estable antes de permitir reveal (si assets listos). */
-  phase2Hold: 400,
-  /** Intervalo de swap del tile de proyecto (solo la imagen loopea). */
-  flash: 300,
-  /** Reveal/fade de salida hacia Home. */
-  reveal: 480,
-  /** Duración mínima de la identidad estática en reduced-motion. */
-  reducedHold: 700,
+  appearAt: 60,
+  /** Aparición suave (blur → sharp + fade). */
+  appear: 720,
+  /** Hold con iconos ciclando antes de poder salir. */
+  phase2Hold: 700,
+  /** Swap duro del tile (estilo Büro: cut, no slide). */
+  flash: 240,
+  /** Slide-away del overlay hacia el Home. */
+  reveal: 920,
+  /** Hold mínimo en reduced-motion. */
+  reducedHold: 600,
 } as const;
 
 /**
- * Evento disparado cuando el Loading termina su reveal y se desmonta.
- * El Hero escucha este evento para arrancar el video (una sola vez).
+ * Evento disparado cuando el Loading empieza a salir (slide-away).
+ * El Hero arranca debajo mientras el overlay aún se mueve.
  */
 export const LOADING_COMPLETE_EVENT = "skl:loading-complete";
 

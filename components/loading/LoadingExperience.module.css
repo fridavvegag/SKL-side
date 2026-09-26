@@ -1,19 +1,19 @@
-/* Estilos locales del Loading. Estilo global (color/tipografía) viene del DS;
-   aquí van composición, posiciones y animación (excepciones locales). */
+/* Loading motion — Figma layout + burocratik.com rhythm.
+   Appear: soft blur/fade. Exit: vertical slide-away (not a plain fade). */
 
 .overlay {
   position: fixed;
   inset: 0;
-  /* Overlay por encima de todo (valor de implementación, no un token del DS). */
   z-index: 9999;
-  opacity: 1;
-  transition: opacity var(--reveal-dur, 480ms) cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translate3d(0, 0, 0);
+  /* Büro-like expo ease for the panel slide */
+  transition: transform var(--reveal-dur, 920ms) cubic-bezier(0.76, 0, 0.24, 1);
+  will-change: transform;
 }
 
-/* Reveal editorial hacia Home: fade + leve blur. */
+/* Panel slides down off-screen, revealing Home underneath (measured on burocratik.com). */
 .revealOut {
-  opacity: 0;
-  filter: blur(4px);
+  transform: translate3d(0, 100%, 0);
   pointer-events: none;
 }
 
@@ -22,9 +22,8 @@
   inset: 0;
 }
 
-/* Lockup fijo [tile] + WE ARE SKLIO (Figma 476:5319).
-   Aparición editorial: fade + soft blur + leve settle vertical.
-   Una vez settled: sin mover ni re-animar; solo cambia el src del tile. */
+/* Lockup [tile] + WE ARE SKLIO — centered per Figma 476:5319.
+   Soft editorial appear; then frozen (only tile src loops). */
 .lockup {
   position: absolute;
   left: 50%;
@@ -34,12 +33,12 @@
   align-items: center;
   gap: 6px;
   opacity: 0;
-  filter: blur(10px);
-  transform: translate(-50%, calc(-50% + 10px));
+  filter: blur(14px);
+  transform: translate(-50%, -50%) scale(0.985);
   transition:
-    opacity var(--appear-dur, 560ms) cubic-bezier(0.22, 1, 0.36, 1),
-    filter var(--appear-dur, 560ms) cubic-bezier(0.22, 1, 0.36, 1),
-    transform var(--appear-dur, 560ms) cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--appear-dur, 720ms) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    filter var(--appear-dur, 720ms) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform var(--appear-dur, 720ms) cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: opacity, filter, transform;
   pointer-events: none;
   z-index: 1;
@@ -48,21 +47,22 @@
 .lockupVisible {
   opacity: 1;
   filter: blur(0);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .lockupSettled {
   transition: none;
   will-change: auto;
+  filter: none;
 }
 
-/* Tile 109×109 (Figma). Contenedor fijo; solo el src de la imagen loopea. */
+/* Tile 109×109 (Figma). Hard cuts on src — no slide. */
 .tile {
   position: relative;
   flex-shrink: 0;
   width: 109px;
   height: 109px;
-  background-color: var(--color-background); /* blanco */
+  background-color: var(--color-background);
   overflow: hidden;
 }
 
@@ -84,6 +84,8 @@
   letter-spacing: -0.06em;
   text-transform: uppercase;
   color: inherit;
+  /* Soft bloom similar to Büro's glowing white type on black */
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.22);
 }
 
 @media (max-width: 767px) {
@@ -92,13 +94,18 @@
   }
 }
 
-/* Reduced motion: aparición instantánea, sin loop. */
 .reduced .lockup {
   transition: none;
   filter: none;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.reduced .overlay {
+  transition: none;
 }
 
 .reduced .revealOut {
-  filter: none;
+  transform: translate3d(0, 100%, 0);
+  opacity: 0;
 }

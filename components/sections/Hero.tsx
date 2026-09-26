@@ -10,8 +10,8 @@ type Phase = "waiting" | "video" | "text";
 /** If playback never starts (autoplay/codec), fall through to text. */
 const PLAYBACK_STALL_MS = 1500;
 
-/** Editorial crossfade video → text (ms). */
-const TEXT_CROSSFADE_MS = 700;
+/** Crossfade video → text (ms), aligned with Büro-like dissolve. */
+const TEXT_CROSSFADE_MS = 850;
 
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);

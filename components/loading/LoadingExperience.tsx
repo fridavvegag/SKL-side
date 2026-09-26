@@ -10,13 +10,10 @@ import {
 } from "./loadingSequence";
 
 /**
- * Loading (secuencia única, no loopea):
- *   1. Aparición editorial del lockup [tile] + "WE ARE SKLIO" (Figma 476:5319)
- *   2. Texto y contenedor del tile quedan fijos; solo el src de la imagen
- *      loopea cada ~300ms mientras se precarga Home
- *   3. Reveal editorial hacia Home cuando la secuencia mínima terminó Y assets listos
- *
- * Respeta prefers-reduced-motion (identidad estática, sin loop de imágenes).
+ * Loading (secuencia única, no loopea) — ritmo burocratik.com:
+ *   1. Aparición suave del lockup [tile] + "WE ARE SKLIO"
+ *   2. Tile con hard-cuts cada ~240ms; texto fijo
+ *   3. Slide-away vertical del overlay; Hero ya arranca debajo
  */
 export function LoadingExperience() {
   const [sklioVisible, setSklioVisible] = useState(false);
@@ -28,7 +25,6 @@ export function LoadingExperience() {
   const [revealing, setRevealing] = useState(false);
   const [done, setDone] = useState(false);
 
-  // Precarga de assets esenciales (imágenes del loop + hero video / cards).
   useEffect(() => {
     if (PRELOAD_ASSETS.length === 0) {
       setAssetsReady(true);
@@ -67,7 +63,6 @@ export function LoadingExperience() {
     };
   }, []);
 
-  // Aparición del lockup (una sola vez) → settled → secuencia mínima lista.
   useEffect(() => {
     const isReduced =
       typeof window !== "undefined" &&
@@ -96,7 +91,6 @@ export function LoadingExperience() {
     };
   }, []);
 
-  // Solo el contenido del tile loopea (contenedor fijo).
   useEffect(() => {
     if (!sklioVisible || reduced || revealing || done) return;
     if (LOOP_IMAGES.length <= 1) return;
@@ -108,18 +102,16 @@ export function LoadingExperience() {
     return () => clearInterval(id);
   }, [sklioVisible, reduced, revealing, done]);
 
-  // Reveal al Home: secuencia mínima lista + assets precargados.
+  // Start slide-away as soon as ready; notify Hero immediately so it plays under the panel.
   useEffect(() => {
     if (!sequenceComplete || !assetsReady || revealing || done) return;
     setRevealing(true);
+    window.dispatchEvent(new CustomEvent(LOADING_COMPLETE_EVENT));
   }, [sequenceComplete, assetsReady, revealing, done]);
 
   useEffect(() => {
     if (!revealing || done) return;
-    const id = window.setTimeout(() => {
-      setDone(true);
-      window.dispatchEvent(new CustomEvent(LOADING_COMPLETE_EVENT));
-    }, TIMINGS.reveal);
+    const id = window.setTimeout(() => setDone(true), TIMINGS.reveal);
     return () => clearTimeout(id);
   }, [revealing, done]);
 
