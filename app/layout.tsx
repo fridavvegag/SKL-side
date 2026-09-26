@@ -11,7 +11,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "skl site",
+  title: "SKLIO",
+  description: "WE ARE SKLIO",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

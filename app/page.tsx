@@ -1,12 +1,5 @@
-import { LoadingExperience } from "@/components/loading/LoadingExperience";
+import { HomePage } from "@/components/HomePage";
 
 export default function Home() {
-  return (
-    <>
-      {/* Home placeholder: el Hero y las secciones aún no se construyen.
-          El Loading se renderiza por encima y hace reveal hacia este contenido. */}
-      <main aria-label="Home" />
-      <LoadingExperience />
-    </>
-  );
+  return <HomePage />;
 }

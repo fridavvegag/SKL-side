@@ -9,6 +9,8 @@
  * carga. NO se aleatoriza nada.
  */
 
+import { homeEssentialAssets } from "@/content/home";
+
 export type Slot = "s1" | "s2" | "s3" | "s4" | "s5" | "s6";
 
 export type Flash = {
@@ -61,13 +63,8 @@ export const TIMINGS = {
   textFade: 250,
 } as const;
 
-/**
- * Assets esenciales a precargar durante el Loading.
- * Por ahora: las imágenes del montaje (que son "primeras imágenes de Projects").
- * Cuando se construya el Home, añadir aquí el hero media y las primeras imágenes
- * visibles de Projects (no se inventan todavía).
- */
-export const HOME_ESSENTIAL_ASSETS: readonly string[] = [];
+/** Assets esenciales del Home a precargar durante el Loading. */
+export const HOME_ESSENTIAL_ASSETS: readonly string[] = homeEssentialAssets;
 
 export const PRELOAD_ASSETS: readonly string[] = [
   ...FLASHES.map((f) => f.image),
