@@ -37,13 +37,16 @@ export const fontWeights = {
  * Editorial no tiene escala propia: reutiliza el tamaño/interlineado del rol.
  */
 export const typography = {
+  // display = título de página, title = título de sección.
+  // Ambos se muestran en MAYÚSCULAS (text-transform), sin alterar el contenido.
   display: {
     fontSize: { mobile: 48, tablet: 96, desktop: 128 },
     lineHeight: { mobile: 44, tablet: 80, desktop: 104 },
     letterSpacing: "-6%", // -0.06em
     fontWeight: 500,
+    textTransform: "uppercase",
   },
-  title: { fontSize: 24, lineHeight: 32, fontWeight: 500 },
+  title: { fontSize: 24, lineHeight: 32, fontWeight: 500, textTransform: "uppercase" },
   bodyLarge: { fontSize: 20, lineHeight: 28, fontWeight: 400 },
   body: { fontSize: 16, lineHeight: 20, fontWeight: 400 },
   nav: { fontSize: 12, lineHeight: 16, fontWeight: 400 },
