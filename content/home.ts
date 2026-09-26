@@ -55,8 +55,14 @@ export const mobileMenuLinks = [
   { label: "SKL SESSION", href: "#session" },
 ] as const;
 
+/**
+ * Hero — Figma Sections/Hero VIDEO fill (CROP). Studio clip is not in the
+ * project video set under /public/assets/videos; drop the original MP4 at
+ * `media` when available. `poster` is the Figma-exported studio frame.
+ */
 export const hero = {
-  media: "/assets/images/home-hero.png",
+  media: "/assets/videos/home-hero.mp4",
+  poster: "/assets/images/home-hero.png",
   sessionLabel: "skl session",
   sessionHref: "#session",
 } as const;
@@ -266,8 +272,12 @@ export const whatWeDo = {
 } as const;
 
 /**
- * Collage SKL Circle — filas alineadas a Figma Desktop/Mobile.
- * Se rellenan slots vacíos del export con assets *-circle-* del repo.
+ * Collage SKL Circle — orden exacto Figma Desktop (334:5006), no por filename.
+ * R1: yucatan video, ahorraconlua, scatola video, smashkitchen
+ * R2: petromayab, nonstop video, operati
+ * R3: imtra | SKL CIRCLE™ | rhino video
+ * R4: airco video, shasa, atmuniversity
+ * R5: viva, logistictrade, ollie, swit video
  */
 export const sklCircle = {
   titlePrefix: "SKL",
@@ -278,41 +288,41 @@ export const sklCircle = {
     {
       id: "row-01",
       tiles: [
-        { id: "c1", media: "/assets/images/ahorraconlua-circle-01.jpg", kind: "image", size: "sm" },
-        { id: "c2", media: "/assets/images/smashkitchen-circle-02.jpg", kind: "image", size: "lg" },
-        { id: "c3", media: "/assets/images/petromayab-circle-03.jpg", kind: "image", size: "sm" },
-        { id: "c4", media: "/assets/images/operati-circle-04.jpg", kind: "image", size: "lg" },
+        { id: "c1", media: "/assets/videos/yucatan-circle-01.mp4", kind: "video", size: "sm" },
+        { id: "c2", media: "/assets/images/ahorraconlua-circle-01.jpg", kind: "image", size: "lg" },
+        { id: "c3", media: "/assets/videos/scatola-circle-02.mp4", kind: "video", size: "sm" },
+        { id: "c4", media: "/assets/images/smashkitchen-circle-02.jpg", kind: "image", size: "lg" },
       ],
     },
     {
       id: "row-02",
       tiles: [
-        { id: "c5", media: "/assets/images/imtra-circle-05.jpg", kind: "image", size: "sm" },
-        { id: "c6", media: "/assets/images/shasa-circle-06.jpg", kind: "image", size: "lg" },
-        { id: "c7", media: "/assets/images/atmuniversity-circle-07.jpg", kind: "image", size: "sm" },
+        { id: "c5", media: "/assets/images/petromayab-circle-03.jpg", kind: "image", size: "sm" },
+        { id: "c6", media: "/assets/videos/nonstop-circle-03.mp4", kind: "video", size: "lg" },
+        { id: "c7", media: "/assets/images/operati-circle-04.jpg", kind: "image", size: "sm" },
       ],
     },
     {
       id: "row-03",
       tiles: [
-        { id: "c8", media: "/assets/images/viva-circle-08.jpg", kind: "image", size: "lg" },
-        { id: "c9", media: "/assets/images/logistictrade-circle-09.jpg", kind: "image", size: "lg" },
+        { id: "c8", media: "/assets/images/imtra-circle-05.jpg", kind: "image", size: "lg" },
+        { id: "c9", media: "/assets/videos/rhino-circle-04.mp4", kind: "video", size: "lg" },
       ],
     },
     {
       id: "row-04",
       tiles: [
-        { id: "c10", media: "/assets/images/ollie-circle-10.jpg", kind: "image", size: "sm" },
-        { id: "c11", media: "/assets/videos/scatola-circle-02.mp4", kind: "video", size: "lg" },
-        { id: "c12", media: "/assets/videos/yucatan-circle-01.mp4", kind: "video", size: "sm" },
+        { id: "c10", media: "/assets/videos/airco-circle-05.mp4", kind: "video", size: "sm" },
+        { id: "c11", media: "/assets/images/shasa-circle-06.jpg", kind: "image", size: "lg" },
+        { id: "c12", media: "/assets/images/atmuniversity-circle-07.jpg", kind: "image", size: "sm" },
       ],
     },
     {
       id: "row-05",
       tiles: [
-        { id: "c13", media: "/assets/videos/airco-circle-05.mp4", kind: "video", size: "lg" },
-        { id: "c14", media: "/assets/videos/nonstop-circle-03.mp4", kind: "video", size: "sm" },
-        { id: "c15", media: "/assets/videos/rhino-circle-04.mp4", kind: "video", size: "lg" },
+        { id: "c13", media: "/assets/images/viva-circle-08.jpg", kind: "image", size: "lg" },
+        { id: "c14", media: "/assets/images/logistictrade-circle-09.jpg", kind: "image", size: "sm" },
+        { id: "c15", media: "/assets/images/ollie-circle-10.jpg", kind: "image", size: "lg" },
         { id: "c16", media: "/assets/videos/swit-circle-06.mp4", kind: "video", size: "sm" },
       ],
     },
@@ -356,8 +366,9 @@ export const footer = {
   ],
 } as const;
 
-/** Assets esenciales a precargar durante Loading (hero + primeras cards visibles). */
+/** Assets esenciales a precargar durante Loading (hero poster + primeras cards). */
 export const homeEssentialAssets: readonly string[] = [
+  hero.poster,
   hero.media,
   "/assets/images/shasa-card-01.jpg",
   "/assets/images/smashkitchen-card-04.jpg",

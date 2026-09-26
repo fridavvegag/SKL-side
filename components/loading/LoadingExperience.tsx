@@ -29,7 +29,7 @@ export function LoadingExperience() {
   const [revealing, setRevealing] = useState(false);
   const [done, setDone] = useState(false);
 
-  // Precarga de assets esenciales.
+  // Precarga de assets esenciales (imágenes + video del Hero).
   useEffect(() => {
     if (PRELOAD_ASSETS.length === 0) {
       setAssetsReady(true);
@@ -42,10 +42,26 @@ export function LoadingExperience() {
       if (loaded >= PRELOAD_ASSETS.length && !cancelled) setAssetsReady(true);
     };
     for (const src of PRELOAD_ASSETS) {
-      const img = new Image();
-      img.onload = finish;
-      img.onerror = finish;
-      img.src = src;
+      if (/\.(mp4|webm|mov)(\?|$)/i.test(src)) {
+        const video = document.createElement("video");
+        video.preload = "auto";
+        video.muted = true;
+        video.playsInline = true;
+        const done = () => {
+          video.removeEventListener("loadeddata", done);
+          video.removeEventListener("error", done);
+          finish();
+        };
+        video.addEventListener("loadeddata", done);
+        video.addEventListener("error", done);
+        video.src = src;
+        video.load();
+      } else {
+        const img = new Image();
+        img.onload = finish;
+        img.onerror = finish;
+        img.src = src;
+      }
     }
     return () => {
       cancelled = true;
