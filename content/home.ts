@@ -366,10 +366,10 @@ export const footer = {
   ],
 } as const;
 
-/** Assets esenciales a precargar durante Loading (hero video/poster + primeras cards). */
+/** Assets esenciales a precargar durante Loading (hero poster + primeras cards). */
 export const homeEssentialAssets: readonly string[] = [
-  hero.media,
   hero.poster,
+  hero.media,
   "/assets/images/shasa-card-01.jpg",
   "/assets/images/smashkitchen-card-04.jpg",
   "/assets/images/rhino-card-06.jpg",

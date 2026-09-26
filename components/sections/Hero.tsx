@@ -9,16 +9,31 @@ export function Hero() {
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
+    if (videoFailed) return;
     const video = videoRef.current;
-    if (!video || videoFailed) return;
+    if (!video) return;
+
     video.muted = true;
+
+    const fail = () => setVideoFailed(true);
     const play = () => {
       void video.play().catch(() => {
         /* autoplay may be blocked; poster remains */
       });
     };
+
+    video.addEventListener("error", fail);
+    if (video.error) {
+      fail();
+      return () => video.removeEventListener("error", fail);
+    }
+
     if (video.readyState >= 2) play();
     else video.addEventListener("loadeddata", play, { once: true });
+
+    return () => {
+      video.removeEventListener("error", fail);
+    };
   }, [videoFailed]);
 
   return (

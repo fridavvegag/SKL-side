@@ -16,7 +16,7 @@ function Tile({ tile }: { tile: CircleTile }) {
           playsInline
           autoPlay
           loop
-          preload="metadata"
+          preload="auto"
           aria-hidden="true"
         />
       ) : (
