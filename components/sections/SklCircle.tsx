@@ -1,9 +1,15 @@
-import { sklCircle, type CircleTile } from "@/content/home";
+"use client";
+
+import { useEffect, useState } from "react";
+import { sklCircle, type CircleRow, type CircleTile } from "@/content/home";
 import styles from "./SklCircle.module.css";
 
 function Tile({ tile }: { tile: CircleTile }) {
   return (
-    <div className={`${styles.tile} ${styles[tile.size]}`}>
+    <div
+      className={styles.tile}
+      style={{ width: tile.w, height: tile.h }}
+    >
       {tile.kind === "video" ? (
         <video
           src={tile.media}
@@ -11,7 +17,7 @@ function Tile({ tile }: { tile: CircleTile }) {
           playsInline
           autoPlay
           loop
-          preload="metadata"
+          preload="auto"
           aria-hidden="true"
         />
       ) : (
@@ -22,54 +28,81 @@ function Tile({ tile }: { tile: CircleTile }) {
   );
 }
 
+function Title() {
+  return (
+    <h2 className={styles.title}>
+      <span className={styles.titlePrefix}>{sklCircle.titlePrefix}</span>
+      <span className={styles.titleSuffix}>{sklCircle.titleSuffix}</span>
+    </h2>
+  );
+}
+
+function rowClass(variant: CircleRow["variant"]) {
+  if (variant === "inset") return `${styles.row} ${styles.rowInset}`;
+  if (variant === "title") return `${styles.row} ${styles.rowTitle}`;
+  return `${styles.row} ${styles.rowWide}`;
+}
+
+function Collage({
+  rows,
+  mode,
+  hidden,
+}: {
+  rows: readonly CircleRow[];
+  mode: "desktop" | "mobile";
+  hidden: boolean;
+}) {
+  return (
+    <div
+      className={`${styles.collage} ${
+        mode === "desktop" ? styles.desktop : styles.mobile
+      }`}
+      aria-hidden={hidden}
+    >
+      {rows.map((row) => (
+        <div key={row.id} className={rowClass(row.variant)}>
+          {row.variant === "title" ? (
+            mode === "desktop" ? (
+              <>
+                <Tile tile={row.tiles[0]} />
+                <Title />
+                <Tile tile={row.tiles[1]} />
+              </>
+            ) : (
+              <Title />
+            )
+          ) : (
+            row.tiles.map((tile) => <Tile key={tile.id} tile={tile} />)
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function SklCircle() {
-  const [row1, row2, row3, row4, row5] = sklCircle.rows;
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   return (
     <section className={styles.section} aria-label="SKL Circle">
-      <div className={styles.collage}>
-        <div className={`${styles.row} ${styles.rowWide}`}>
-          {row1.tiles.map((tile) => (
-            <Tile key={tile.id} tile={tile} />
-          ))}
-        </div>
-
-        <div className={`${styles.row} ${styles.rowInset}`}>
-          {row2.tiles.map((tile) => (
-            <Tile key={tile.id} tile={tile} />
-          ))}
-        </div>
-
-        <div className={`${styles.row} ${styles.rowTitle}`}>
-          <Tile tile={row3.tiles[0]} />
-          <h2 className={styles.title}>
-            <span className={styles.titlePrefix}>{sklCircle.titlePrefix}</span>
-            <span className={styles.titleSuffix}>{sklCircle.titleSuffix}</span>
-          </h2>
-          <Tile tile={row3.tiles[1]} />
-        </div>
-
-        <div className={`${styles.row} ${styles.rowInset}`}>
-          {row4.tiles.map((tile) => (
-            <Tile key={tile.id} tile={tile} />
-          ))}
-        </div>
-
-        <div className={`${styles.row} ${styles.rowWide}`}>
-          {row5.tiles.map((tile) => (
-            <Tile key={tile.id} tile={tile} />
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.footer}>
-        <p className={styles.footerLeft}>{sklCircle.footerLeft}</p>
-        <div className={styles.footerRight}>
-          {sklCircle.footerRight.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
-        </div>
-      </div>
+      <Collage
+        rows={sklCircle.desktop.rows}
+        mode="desktop"
+        hidden={!isDesktop}
+      />
+      <Collage
+        rows={sklCircle.mobile.rows}
+        mode="mobile"
+        hidden={isDesktop}
+      />
     </section>
   );
 }

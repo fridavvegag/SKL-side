@@ -49,7 +49,8 @@
 }
 
 .description {
-  font-size: var(--text-body);
+  /* Mobile Figma refinement: category at 14px (local exception; desktop stays body). */
+  font-size: 14px;
   line-height: normal;
   text-align: right;
 }

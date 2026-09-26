@@ -63,6 +63,12 @@ export const TIMINGS = {
   textFade: 250,
 } as const;
 
+/**
+ * Evento disparado cuando el Loading termina su reveal y se desmonta.
+ * El Hero escucha este evento para arrancar el video (una sola vez).
+ */
+export const LOADING_COMPLETE_EVENT = "skl:loading-complete";
+
 /** Assets esenciales del Home a precargar durante el Loading. */
 export const HOME_ESSENTIAL_ASSETS: readonly string[] = homeEssentialAssets;
 
