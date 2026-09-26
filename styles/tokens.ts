@@ -1,9 +1,8 @@
 /**
  * Sistema de diseño base — fuente de verdad en TypeScript.
  *
- * Contiene ÚNICAMENTE los valores exactos entregados; refleja las variables
- * CSS de `app/globals.css`. No se inventan valores. Lo no especificado se
- * marca abajo en `undefinedValues` y NO se rellena.
+ * Contiene ÚNICAMENTE los valores exactos confirmados; refleja las variables
+ * CSS de `app/globals.css`. No se inventan valores.
  *
  * Unidades en px salvo el letter-spacing del display, entregado como -6%
  * (expresado como "-0.06em" en CSS).
@@ -22,32 +21,32 @@ export const colors = {
 } as const;
 
 export const fontFamilies = {
-  /** Montserrat (pesos 400 y 500), cargada vía next/font como var(--font-montserrat). */
-  sans: "var(--font-montserrat)",
-  /** Hiragino Mincho Pro (400), uso solo editorial. Fallback NO DEFINIDO. */
-  editorial: '"Hiragino Mincho Pro"',
+  /** Montserrat (400/500) vía next/font como var(--font-montserrat), con fallback Arial, sans-serif. */
+  sans: "var(--font-montserrat), Arial, sans-serif",
+  /** Hiragino Mincho Pro (400), uso solo editorial, fallback serif. */
+  editorial: '"Hiragino Mincho Pro", serif',
 } as const;
 
-/** Pesos de Montserrat disponibles (asignación por rol NO DEFINIDA). */
 export const fontWeights = {
-  regular: 400,
-  medium: 500,
+  regular: 400, // body y texto general
+  medium: 500, // títulos y headings
 } as const;
 
 /**
  * Escala tipográfica (px). El display es responsivo por breakpoint.
- * Para el display, el line-height 104 solo está definido para 128 (desktop).
+ * Editorial no tiene escala propia: reutiliza el tamaño/interlineado del rol.
  */
 export const typography = {
   display: {
     fontSize: { mobile: 48, tablet: 96, desktop: 128 },
-    lineHeight: { desktop: 104 }, // tablet/mobile NO DEFINIDO
+    lineHeight: { mobile: 44, tablet: 80, desktop: 104 },
     letterSpacing: "-6%", // -0.06em
+    fontWeight: 500,
   },
-  title: { fontSize: 24, lineHeight: 32 },
-  bodyLarge: { fontSize: 20, lineHeight: 28 },
-  body: { fontSize: 16, lineHeight: 20 },
-  nav: { fontSize: 12 }, // lineHeight NO DEFINIDO
+  title: { fontSize: 24, lineHeight: 32, fontWeight: 500 },
+  bodyLarge: { fontSize: 20, lineHeight: 28, fontWeight: 400 },
+  body: { fontSize: 16, lineHeight: 20, fontWeight: 400 },
+  nav: { fontSize: 12, lineHeight: 16, fontWeight: 400 },
 } as const;
 
 /** Tamaños de texto para links/botones (coinciden con nav, body, title). */
@@ -58,25 +57,23 @@ export const actionSizes = {
 } as const;
 
 /**
- * Espaciado. Regla: múltiplos de 8; excepción de 4 entre texto e ícono.
- * La enumeración completa de la escala NO fue definida; se listan la unidad,
- * la excepción y los valores concretos en uso.
+ * Escala de espaciado. Usar SOLO estos valores, salvo lo explícito del diseño
+ * (p. ej. el gutter de grid de 14px). Incluye 4px como separación texto-ícono.
  */
-export const spacing = {
-  unit: 8,
-  iconGap: 4, // excepción texto-ícono
-  s8: 8,
-  s16: 16,
-  s40: 40,
-} as const;
+export const spacing = [
+  4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 96, 104, 128,
+] as const;
 
-/** Cero radius en todo. */
+/** Separación texto-ícono. */
+export const iconGap = 4;
+
+/** Border radius = 0 en todo el sistema. */
 export const radius = 0;
 
 export const grid = {
   desktop: { columns: 3, gutter: 14, margin: 16 },
+  tablet: { columns: 3, gutter: 14, margin: 16 },
   mobile: { columns: 1, gutter: 8, margin: 16 },
-  // tablet (768-1199): NO DEFINIDO
 } as const;
 
 /** Breakpoints en px: mobile 0-767, tablet 768-1199, desktop 1200+. */
@@ -90,28 +87,29 @@ export const header = {
   paddingX: 16,
 } as const;
 
+/** Interacción de links/botones (solo texto, sin contenedor). */
+export const interaction = {
+  linkDefault: "#000000",
+  linkHover: "#e9e778",
+  linkDisabled: "#b7b7b7",
+} as const;
+
 export const form = {
-  /** Padding vertical por pregunta. */
+  /** Padding vertical por bloque de pregunta (Book a Session). */
   questionPaddingY: 40,
-  /** Grosor del divisor entre preguntas. Color NO DEFINIDO. */
   dividerWidth: 1,
+  dividerColor: "#b7b7b7",
+  placeholderColor: "#929496",
+  textColor: "#000000",
 } as const;
 
 /**
- * Registro explícito de valores NO DEFINIDOS en la especificación entregada.
- * No se rellenan: se reportan para que el autor los provea.
+ * Pendiente por decisión del autor (NO se define aún; se implementará desde
+ * Figma). No es un valor inventable.
  */
-export const undefinedValues = [
-  "Fallback de fuente para Montserrat y Hiragino Mincho Pro",
-  "Peso (400 vs 500) por rol tipográfico",
-  "line-height del display en tablet (96) y mobile (48)",
-  "line-height de navegación (12)",
-  "Tamaño e interlineado del texto editorial",
-  "Grid para tablet (768-1199): columnas, gutter y margen",
-  "Enumeración completa de la escala de espaciado (solo regla base 8 + excepción 4)",
-  "Color del divisor de 1px entre preguntas",
-  "Color de reposo definitivo de links/botones (interpretado como gris #929496)",
-  "Estilos de 'selecciones' (indicado como 'como en diseño', sin valores)",
+export const pending = [
+  "Spacing sección-a-sección (se define al implementar layouts desde Figma)",
+  "Controles visuales de selección (se implementan con Book a Session)",
 ] as const;
 
 export const tokens = {
@@ -121,10 +119,12 @@ export const tokens = {
   typography,
   actionSizes,
   spacing,
+  iconGap,
   radius,
   grid,
   breakpoints,
   header,
+  interaction,
   form,
 } as const;
 
@@ -132,5 +132,6 @@ export type Tokens = typeof tokens;
 export type ColorToken = keyof typeof colors;
 export type ActionSize = keyof typeof actionSizes;
 export type Breakpoint = keyof typeof breakpoints;
+export type Spacing = (typeof spacing)[number];
 
 export default tokens;

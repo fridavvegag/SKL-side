@@ -1,12 +1,12 @@
 /*
- * Sistema de diseño base
- * ----------------------
- * Tokens definidos ÚNICAMENTE con los valores exactos entregados. No se
- * inventan valores. Los valores no especificados se documentan como
- * "NO DEFINIDO" y no se rellenan.
+ * Sistema de diseño base (fuente de verdad de estilos)
+ * ----------------------------------------------------
+ * Tokens definidos ÚNICAMENTE con los valores exactos confirmados. No se
+ * inventan valores. Lo que queda pendiente por decisión del autor (spacing
+ * sección-a-sección y controles de selección) NO se define aquí.
  *
- * Unidades: se usan px tal como se entregaron (valores de Figma). El
- * letter-spacing -6% se expresa como -0.06em (relativo al tamaño de fuente).
+ * Unidades: px tal como se entregaron (valores de Figma). El letter-spacing
+ * -6% del display se expresa como -0.06em (relativo al tamaño de fuente).
  */
 
 :root {
@@ -22,53 +22,68 @@
   --color-warning: #dcb828;
 
   /* ===== Tipografía: familias ===== */
-  /* Montserrat se carga con next/font (pesos 400 y 500) y expone --font-montserrat */
-  --font-sans: var(--font-montserrat);
-  /* Hiragino Mincho Pro 400, uso solo editorial. NO DEFINIDO: fallback de fuente. */
-  --font-editorial: "Hiragino Mincho Pro";
+  /* Montserrat (400/500) se carga con next/font y expone --font-montserrat. */
+  --font-sans: var(--font-montserrat), Arial, sans-serif;
+  /* Hiragino Mincho Pro (400), uso solo editorial (cambio de familia). */
+  --font-editorial: "Hiragino Mincho Pro", serif;
+
+  /* ===== Tipografía: pesos ===== */
+  --font-weight-regular: 400; /* body y texto general */
+  --font-weight-medium: 500; /* títulos y headings */
 
   /* ===== Tipografía: escala (px) ===== */
-  /* Display: 128 (desktop) / 96 (tablet) / 48 (mobile). Se sobreescribe por breakpoint más abajo. */
+  /* Display responsivo: 48/44 (mobile) · 96/80 (tablet) · 128/104 (desktop). */
   --text-display: 48px; /* base = mobile (0-767) */
-  --leading-display-desktop: 104px; /* line-height SOLO definido para 128. NO DEFINIDO en tablet/mobile. */
+  --leading-display: 44px; /* base = mobile (0-767) */
   --tracking-display: -0.06em; /* -6% */
 
   --text-title: 24px;
-  --leading-title: 32px; /* "24 sobre 32" */
+  --leading-title: 32px;
 
   --text-body-large: 20px;
-  --leading-body-large: 28px; /* "20 sobre 28" */
+  --leading-body-large: 28px;
 
   --text-body: 16px;
-  --leading-body: 20px; /* "16 sobre 20" */
+  --leading-body: 20px;
 
-  --text-nav: 12px; /* NO DEFINIDO: line-height de navegación */
+  --text-nav: 12px;
+  --leading-nav: 16px;
 
-  /* Links/botones: tamaños 12, 16 y 24 (coinciden con nav, body y title) */
+  /* Links/botones: tamaños 12, 16 y 24 (coinciden con nav, body y title). */
   --text-action-sm: 12px;
   --text-action-md: 16px;
   --text-action-lg: 24px;
 
-  /* ===== Espaciado ===== */
-  /* Regla: múltiplos de 8. Excepción: 4 entre texto e ícono. */
-  --space-unit: 8px;
-  --space-icon: 4px; /* excepción texto-ícono */
+  /* ===== Escala de espaciado ===== */
+  /* Usar SOLO estos valores (salvo lo explícito del diseño, p. ej. gutter 14). */
+  --space-4: 4px; /* incl. separación texto-ícono */
   --space-8: 8px;
   --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
   --space-40: 40px;
-  /* NO DEFINIDO: enumeración completa de la escala (solo se dio la regla y estos valores en uso). */
+  --space-48: 48px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --space-72: 72px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-104: 104px;
+  --space-128: 128px;
 
   /* ===== Radius ===== */
-  --radius: 0; /* cero radius en todo */
+  --radius: 0; /* border radius = 0 en todo el sistema */
 
   /* ===== Grid ===== */
   --grid-columns-desktop: 3;
   --grid-gutter-desktop: 14px;
   --grid-margin-desktop: 16px;
+  --grid-columns-tablet: 3;
+  --grid-gutter-tablet: 14px;
+  --grid-margin-tablet: 16px;
   --grid-columns-mobile: 1;
   --grid-gutter-mobile: 8px;
   --grid-margin-mobile: 16px;
-  /* NO DEFINIDO: grid para tablet (768-1199). */
 
   /* ===== Breakpoints ===== */
   --breakpoint-tablet: 768px; /* tablet: 768-1199 */
@@ -78,31 +93,34 @@
   --header-height: 40px;
   --header-padding-x: 16px;
 
-  /* ===== Formulario / preguntas ===== */
-  --question-padding-y: 40px; /* padding 40 arriba y abajo por pregunta */
-  --divider-width: 1px; /* NO DEFINIDO: color del divisor */
+  /* ===== Formulario / preguntas (Book a Session) ===== */
+  --question-padding-y: 40px; /* 40px arriba y abajo por bloque de pregunta */
+  --divider-width: 1px;
+  --divider-color: #b7b7b7;
 }
 
 /* Display responsivo (mobile-first) */
 @media (min-width: 768px) {
   :root {
     --text-display: 96px; /* tablet 768-1199 */
+    --leading-display: 80px;
   }
 }
 @media (min-width: 1200px) {
   :root {
     --text-display: 128px; /* desktop 1200+ */
+    --leading-display: 104px;
   }
 }
 
 /* ==========================================================================
-   Reset estructural mínimo (sin valores de diseño inventados)
+   Reset estructural mínimo
    ========================================================================== */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  border-radius: var(--radius); /* cero radius en todo */
+  border-radius: var(--radius); /* 0 en todo el sistema */
 }
 
 * {
@@ -116,19 +134,19 @@ body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
   font-size: var(--text-body);
   line-height: var(--leading-body);
 }
 
-/* Links y botones: texto sin contenedor. Reposo en gris (#929496),
-   hover cambia SOLO el color a accent, disabled en #B7B7B7.
-   (Interpretación de "texto y disabled en gris" — ver reporte.) */
+/* Links y botones: solo texto, sin background/container/border/radius.
+   Default #000000, hover accent, disabled #B7B7B7. Ícono opcional a 4px. */
 a,
 button {
   background: none;
   border: none;
   padding: 0;
-  color: var(--color-gray);
+  color: var(--color-text-primary);
   font: inherit;
 }
 
@@ -152,8 +170,8 @@ button[aria-disabled="true"] {
   cursor: not-allowed;
 }
 
-/* Formulario: sin cajas, sin bordes en campos abiertos, texto negro,
-   placeholder gris. */
+/* Formulario: sin caja, sin fondo y sin borde en campos abiertos.
+   Texto ingresado #000000, placeholder con el color de texto gris. */
 input,
 textarea {
   background: none;
@@ -169,46 +187,46 @@ textarea::placeholder {
 
 /* ==========================================================================
    Roles tipográficos
-   NO DEFINIDO: peso (400 vs 500) por rol; no se fija font-weight.
    ========================================================================== */
 .text-display {
   font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium); /* heading */
   font-size: var(--text-display);
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
-}
-@media (min-width: 1200px) {
-  /* line-height 104 solo está definido para el display de 128 (desktop) */
-  .text-display {
-    line-height: var(--leading-display-desktop);
-  }
 }
 
 .text-title {
   font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium); /* heading */
   font-size: var(--text-title);
   line-height: var(--leading-title);
 }
 
 .text-body-large {
   font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
   font-size: var(--text-body-large);
   line-height: var(--leading-body-large);
 }
 
 .text-body {
   font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
   font-size: var(--text-body);
   line-height: var(--leading-body);
 }
 
 .text-nav {
   font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
   font-size: var(--text-nav);
-  /* NO DEFINIDO: line-height */
+  line-height: var(--leading-nav);
 }
 
-/* Uso solo editorial (Hiragino Mincho Pro 400). NO DEFINIDO: tamaño/interlineado. */
+/* Voz editorial: solo cambia la familia (y peso 400). Hereda el font-size y
+   line-height del rol con el que se combine (p. ej. .text-body-large.text-editorial). */
 .text-editorial {
   font-family: var(--font-editorial);
-  font-weight: 400;
+  font-weight: var(--font-weight-regular);
 }
