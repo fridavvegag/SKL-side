@@ -9,7 +9,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--space-16);
+  /* Mobile local exception: 24px outer padding (site grid margin stays 16px). */
+  padding: 0 var(--space-24);
 }
 
 .headline {
@@ -27,7 +28,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-40);
-  padding: var(--space-48) var(--space-16);
+  padding: var(--space-48) var(--space-24);
   background: var(--color-accent);
 }
 
@@ -80,6 +81,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-16);
+    padding: var(--space-48) var(--space-16);
   }
 
   .column {
