@@ -34,12 +34,16 @@ export type CircleTile = {
   id: string;
   media: string;
   kind: MediaKind;
-  size: "sm" | "lg";
+  /** Exact Figma container size (px). */
+  w: number;
+  h: number;
 };
 
 export type CircleRow = {
   id: string;
   tiles: CircleTile[];
+  /** Desktop: wide=16px pad, inset=228px pad, title=16px + logo. Mobile: centered overflow. */
+  variant: "wide" | "inset" | "title";
 };
 
 export const nav = {
@@ -56,13 +60,11 @@ export const mobileMenuLinks = [
 ] as const;
 
 /**
- * Hero — Figma Sections/Hero VIDEO fill (CROP). Studio clip is not in the
- * project video set under /public/assets/videos; drop the original MP4 at
- * `media` when available. `poster` is the Figma-exported studio frame.
+ * Hero — Figma Sections/Hero VIDEO fill (CROP).
+ * Source: /public/assets/videos/home-hero.mp4
  */
 export const hero = {
   media: "/assets/videos/home-hero.mp4",
-  poster: "/assets/images/home-hero.png",
   sessionLabel: "skl session",
   sessionHref: "#session",
 } as const;
@@ -272,61 +274,108 @@ export const whatWeDo = {
 } as const;
 
 /**
- * Collage SKL Circle — orden exacto Figma Desktop (334:5006), no por filename.
- * R1: yucatan video, ahorraconlua, scatola video, smashkitchen
- * R2: petromayab, nonstop video, operati
- * R3: imtra | SKL CIRCLE™ | rhino video
- * R4: airco video, shasa, atmuniversity
- * R5: viva, logistictrade, ollie, swit video
+ * SKL Circle — Figma Desktop 334:5006 + Mobile 334:5008.
+ * Separate compositions; Mobile is not derived from Desktop.
+ * Containers use exact Figma sizes; media fills via object-fit:cover.
  */
 export const sklCircle = {
   titlePrefix: "SKL",
   titleSuffix: "CIRCLE™",
-  footerLeft: "Great work can start with a brief and grow into something much bigger.",
-  footerRight: ["Some came for a project.", "All became part of the circle."],
-  rows: [
-    {
-      id: "row-01",
-      tiles: [
-        { id: "c1", media: "/assets/videos/yucatan-circle-01.mp4", kind: "video", size: "sm" },
-        { id: "c2", media: "/assets/images/ahorraconlua-circle-01.jpg", kind: "image", size: "lg" },
-        { id: "c3", media: "/assets/videos/scatola-circle-02.mp4", kind: "video", size: "sm" },
-        { id: "c4", media: "/assets/images/smashkitchen-circle-02.jpg", kind: "image", size: "lg" },
-      ],
-    },
-    {
-      id: "row-02",
-      tiles: [
-        { id: "c5", media: "/assets/images/petromayab-circle-03.jpg", kind: "image", size: "sm" },
-        { id: "c6", media: "/assets/videos/nonstop-circle-03.mp4", kind: "video", size: "lg" },
-        { id: "c7", media: "/assets/images/operati-circle-04.jpg", kind: "image", size: "sm" },
-      ],
-    },
-    {
-      id: "row-03",
-      tiles: [
-        { id: "c8", media: "/assets/images/imtra-circle-05.jpg", kind: "image", size: "lg" },
-        { id: "c9", media: "/assets/videos/rhino-circle-04.mp4", kind: "video", size: "lg" },
-      ],
-    },
-    {
-      id: "row-04",
-      tiles: [
-        { id: "c10", media: "/assets/videos/airco-circle-05.mp4", kind: "video", size: "sm" },
-        { id: "c11", media: "/assets/images/shasa-circle-06.jpg", kind: "image", size: "lg" },
-        { id: "c12", media: "/assets/images/atmuniversity-circle-07.jpg", kind: "image", size: "sm" },
-      ],
-    },
-    {
-      id: "row-05",
-      tiles: [
-        { id: "c13", media: "/assets/images/viva-circle-08.jpg", kind: "image", size: "lg" },
-        { id: "c14", media: "/assets/images/logistictrade-circle-09.jpg", kind: "image", size: "sm" },
-        { id: "c15", media: "/assets/images/ollie-circle-10.jpg", kind: "image", size: "lg" },
-        { id: "c16", media: "/assets/videos/swit-circle-06.mp4", kind: "video", size: "sm" },
-      ],
-    },
-  ] satisfies CircleRow[],
+  desktop: {
+    rows: [
+      {
+        id: "d-row-01",
+        variant: "wide" as const,
+        tiles: [
+          { id: "d1", media: "/assets/videos/yucatan-circle-01.mp4", kind: "video" as const, w: 168, h: 167 },
+          { id: "d2", media: "/assets/images/ahorraconlua-circle-01.jpg", kind: "image" as const, w: 204, h: 204 },
+          { id: "d3", media: "/assets/videos/scatola-circle-02.mp4", kind: "video" as const, w: 168, h: 168 },
+          { id: "d4", media: "/assets/images/smashkitchen-circle-02.jpg", kind: "image" as const, w: 204, h: 204 },
+        ],
+      },
+      {
+        id: "d-row-02",
+        variant: "inset" as const,
+        tiles: [
+          { id: "d5", media: "/assets/images/petromayab-circle-03.jpg", kind: "image" as const, w: 168, h: 167 },
+          { id: "d6", media: "/assets/videos/nonstop-circle-03.mp4", kind: "video" as const, w: 204, h: 204 },
+          { id: "d7", media: "/assets/images/operati-circle-04.jpg", kind: "image" as const, w: 168, h: 168 },
+        ],
+      },
+      {
+        id: "d-row-03",
+        variant: "title" as const,
+        tiles: [
+          { id: "d8", media: "/assets/images/imtra-circle-05.jpg", kind: "image" as const, w: 204, h: 204 },
+          { id: "d9", media: "/assets/videos/rhino-circle-04.mp4", kind: "video" as const, w: 204, h: 204 },
+        ],
+      },
+      {
+        id: "d-row-04",
+        variant: "inset" as const,
+        tiles: [
+          { id: "d10", media: "/assets/videos/airco-circle-05.mp4", kind: "video" as const, w: 168, h: 167 },
+          { id: "d11", media: "/assets/images/shasa-circle-06.jpg", kind: "image" as const, w: 204, h: 204 },
+          { id: "d12", media: "/assets/images/atmuniversity-circle-07.jpg", kind: "image" as const, w: 168, h: 167 },
+        ],
+      },
+      {
+        id: "d-row-05",
+        variant: "wide" as const,
+        tiles: [
+          { id: "d13", media: "/assets/images/viva-circle-08.jpg", kind: "image" as const, w: 204, h: 204 },
+          { id: "d14", media: "/assets/images/logistictrade-circle-09.jpg", kind: "image" as const, w: 168, h: 167 },
+          { id: "d15", media: "/assets/images/ollie-circle-10.jpg", kind: "image" as const, w: 204, h: 204 },
+          { id: "d16", media: "/assets/videos/swit-circle-06.mp4", kind: "video" as const, w: 168, h: 167 },
+        ],
+      },
+    ],
+  },
+  mobile: {
+    rows: [
+      {
+        id: "m-row-01",
+        variant: "wide" as const,
+        tiles: [
+          { id: "m1", media: "/assets/videos/yucatan-circle-01.mp4", kind: "video" as const, w: 88, h: 88 },
+          { id: "m2", media: "/assets/images/smashkitchen-circle-02.jpg", kind: "image" as const, w: 128, h: 128 },
+          { id: "m3", media: "/assets/videos/scatola-circle-02.mp4", kind: "video" as const, w: 88, h: 88 },
+        ],
+      },
+      {
+        id: "m-row-02",
+        variant: "wide" as const,
+        tiles: [
+          { id: "m4", media: "/assets/images/operati-circle-04.jpg", kind: "image" as const, w: 128, h: 128 },
+          { id: "m5", media: "/assets/images/atmuniversity-circle-07.jpg", kind: "image" as const, w: 88, h: 88 },
+          { id: "m6", media: "/assets/videos/nonstop-circle-03.mp4", kind: "video" as const, w: 128, h: 128 },
+        ],
+      },
+      {
+        id: "m-row-03",
+        variant: "title" as const,
+        tiles: [] as CircleTile[],
+      },
+      {
+        id: "m-row-04",
+        variant: "wide" as const,
+        tiles: [
+          { id: "m7", media: "/assets/videos/airco-circle-05.mp4", kind: "video" as const, w: 88, h: 88 },
+          { id: "m8", media: "/assets/images/shasa-circle-06.jpg", kind: "image" as const, w: 128, h: 128 },
+          { id: "m9", media: "/assets/videos/rhino-circle-04.mp4", kind: "video" as const, w: 88, h: 88 },
+        ],
+      },
+      {
+        id: "m-row-05",
+        variant: "wide" as const,
+        tiles: [
+          { id: "m10", media: "/assets/images/viva-circle-08.jpg", kind: "image" as const, w: 128, h: 128 },
+          { id: "m11", media: "/assets/videos/swit-circle-06.mp4", kind: "video" as const, w: 88, h: 88 },
+          { id: "m12", media: "/assets/images/ollie-circle-10.jpg", kind: "image" as const, w: 128, h: 128 },
+        ],
+      },
+    ],
+  },
 } as const;
 
 export const footer = {
@@ -366,9 +415,8 @@ export const footer = {
   ],
 } as const;
 
-/** Assets esenciales a precargar durante Loading (hero poster + primeras cards). */
+/** Assets esenciales a precargar durante Loading (hero video + primeras cards). */
 export const homeEssentialAssets: readonly string[] = [
-  hero.poster,
   hero.media,
   "/assets/images/shasa-card-01.jpg",
   "/assets/images/smashkitchen-card-04.jpg",

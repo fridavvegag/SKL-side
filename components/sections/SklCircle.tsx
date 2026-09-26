@@ -1,14 +1,12 @@
-"use client";
-
-import { sklCircle, type CircleTile } from "@/content/home";
-import { ScrollReveal } from "@/components/motion/ScrollReveal";
+import { sklCircle, type CircleRow, type CircleTile } from "@/content/home";
 import styles from "./SklCircle.module.css";
-
-const STAGGER_MS = 60;
 
 function Tile({ tile }: { tile: CircleTile }) {
   return (
-    <div className={`${styles.tile} ${styles[tile.size]}`}>
+    <div
+      className={styles.tile}
+      style={{ width: tile.w, height: tile.h }}
+    >
       {tile.kind === "video" ? (
         <video
           src={tile.media}
@@ -27,61 +25,62 @@ function Tile({ tile }: { tile: CircleTile }) {
   );
 }
 
+function Title() {
+  return (
+    <h2 className={styles.title}>
+      <span className={styles.titlePrefix}>{sklCircle.titlePrefix}</span>
+      <span className={styles.titleSuffix}>{sklCircle.titleSuffix}</span>
+    </h2>
+  );
+}
+
+function rowClass(variant: CircleRow["variant"]) {
+  if (variant === "inset") return `${styles.row} ${styles.rowInset}`;
+  if (variant === "title") return `${styles.row} ${styles.rowTitle}`;
+  return `${styles.row} ${styles.rowWide}`;
+}
+
+function DesktopCollage() {
+  return (
+    <div className={`${styles.collage} ${styles.desktop}`}>
+      {sklCircle.desktop.rows.map((row) => (
+        <div key={row.id} className={rowClass(row.variant)}>
+          {row.variant === "title" ? (
+            <>
+              <Tile tile={row.tiles[0]} />
+              <Title />
+              <Tile tile={row.tiles[1]} />
+            </>
+          ) : (
+            row.tiles.map((tile) => <Tile key={tile.id} tile={tile} />)
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MobileCollage() {
+  return (
+    <div className={`${styles.collage} ${styles.mobile}`}>
+      {sklCircle.mobile.rows.map((row) => (
+        <div key={row.id} className={rowClass(row.variant)}>
+          {row.variant === "title" ? (
+            <Title />
+          ) : (
+            row.tiles.map((tile) => <Tile key={tile.id} tile={tile} />)
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function SklCircle() {
-  const [row1, row2, row3, row4, row5] = sklCircle.rows;
-
-  const revealTiles = (tiles: readonly CircleTile[], startIndex = 0) =>
-    tiles.map((tile, i) => (
-      <ScrollReveal key={tile.id} delay={(startIndex + i) * STAGGER_MS}>
-        <Tile tile={tile} />
-      </ScrollReveal>
-    ));
-
   return (
     <section className={styles.section} aria-label="SKL Circle">
-      <div className={styles.collage}>
-        <div className={`${styles.row} ${styles.rowWide}`}>
-          {revealTiles(row1.tiles, 0)}
-        </div>
-
-        <div className={`${styles.row} ${styles.rowInset}`}>
-          {revealTiles(row2.tiles, 0)}
-        </div>
-
-        <div className={`${styles.row} ${styles.rowTitle}`}>
-          <ScrollReveal delay={0}>
-            <Tile tile={row3.tiles[0]} />
-          </ScrollReveal>
-          <ScrollReveal delay={STAGGER_MS}>
-            <h2 className={styles.title}>
-              <span className={styles.titlePrefix}>{sklCircle.titlePrefix}</span>
-              <span className={styles.titleSuffix}>{sklCircle.titleSuffix}</span>
-            </h2>
-          </ScrollReveal>
-          <ScrollReveal delay={STAGGER_MS * 2}>
-            <Tile tile={row3.tiles[1]} />
-          </ScrollReveal>
-        </div>
-
-        <div className={`${styles.row} ${styles.rowInset}`}>
-          {revealTiles(row4.tiles, 0)}
-        </div>
-
-        <div className={`${styles.row} ${styles.rowWide}`}>
-          {revealTiles(row5.tiles, 0)}
-        </div>
-      </div>
-
-      <ScrollReveal>
-        <div className={styles.footer}>
-          <p className={styles.footerLeft}>{sklCircle.footerLeft}</p>
-          <div className={styles.footerRight}>
-            {sklCircle.footerRight.map((line) => (
-              <p key={line}>{line}</p>
-            ))}
-          </div>
-        </div>
-      </ScrollReveal>
+      <DesktopCollage />
+      <MobileCollage />
     </section>
   );
 }

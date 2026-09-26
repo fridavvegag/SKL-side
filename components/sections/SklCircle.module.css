@@ -1,7 +1,6 @@
+/* SKL Circle — Figma Desktop 334:5006 / Mobile 334:5008 */
+
 .section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-32);
   width: 100%;
   overflow: hidden;
 }
@@ -9,25 +8,34 @@
 .collage {
   display: flex;
   flex-direction: column;
-  gap: var(--space-40);
   width: 100%;
+}
+
+.desktop {
+  display: none;
+}
+
+.mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 40px; /* Figma Mobile Clients itemSpacing */
 }
 
 .row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 60px;
   width: 100%;
 }
 
-.rowWide,
-.rowInset {
-  /* same on mobile */
+/* Mobile: centered rows with 60px gap; side tiles intentionally overflow */
+.mobile .row {
+  justify-content: center;
+  gap: 60px;
 }
 
-.rowTitle {
-  gap: var(--space-16);
+.mobile .rowTitle {
+  justify-content: center;
+  gap: 0;
 }
 
 .tile {
@@ -35,16 +43,6 @@
   overflow: hidden;
   flex-shrink: 0;
   background: #f2f2f2;
-}
-
-.tile.sm {
-  width: 88px;
-  height: 88px;
-}
-
-.tile.lg {
-  width: 128px;
-  height: 128px;
 }
 
 .tile img,
@@ -64,12 +62,13 @@
   color: var(--color-text-primary);
   white-space: nowrap;
   margin: 0;
+  flex-shrink: 0;
 }
 
 .titlePrefix {
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: var(--text-title);
+  font-size: var(--text-title); /* 24px mobile */
   line-height: normal;
   letter-spacing: -0.06em;
 }
@@ -77,45 +76,38 @@
 .titleSuffix {
   font-family: var(--font-sans);
   font-weight: var(--font-weight-medium);
-  font-size: 48px;
+  font-size: 48px; /* Figma Mobile */
   line-height: normal;
   letter-spacing: -0.06em;
 }
 
-.footer {
-  display: none;
-}
-
+/* Desktop — Figma 334:5006 */
 @media (min-width: 768px) {
-  .collage {
-    gap: 92px;
+  .mobile {
+    display: none;
   }
 
-  .row {
+  .desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 92px; /* Figma Clients itemSpacing */
+  }
+
+  .desktop .row {
     justify-content: space-between;
     gap: 0;
   }
 
-  .rowWide {
-    padding: 0 var(--space-16);
+  .desktop .rowWide {
+    padding: 0 16px;
   }
 
-  .rowInset {
+  .desktop .rowInset {
     padding: 0 228px;
   }
 
-  .rowTitle {
-    padding: 0 var(--space-16);
-  }
-
-  .tile.sm {
-    width: 168px;
-    height: 167px;
-  }
-
-  .tile.lg {
-    width: 204px;
-    height: 204px;
+  .desktop .rowTitle {
+    padding: 0 16px;
   }
 
   .titlePrefix {
@@ -126,34 +118,5 @@
   .titleSuffix {
     font-size: 128px;
     letter-spacing: -0.06em;
-  }
-
-  .footer {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-24);
-    padding: 0 var(--space-16);
-    font-family: var(--font-sans);
-    font-weight: var(--font-weight-regular);
-    font-size: var(--text-body-large);
-    line-height: normal;
-    color: var(--color-text-secondary);
-  }
-
-  .footerLeft {
-    max-width: 377px;
-  }
-
-  .footerRight {
-    max-width: 359px;
-    text-align: right;
-  }
-}
-
-/* On mobile, hide side tiles on the title row to match Figma (title alone) */
-@media (max-width: 767px) {
-  .rowTitle .tile {
-    display: none;
   }
 }

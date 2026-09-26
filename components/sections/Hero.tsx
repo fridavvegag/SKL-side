@@ -1,63 +1,40 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { hero } from "@/content/home";
 import styles from "./Hero.module.css";
 
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
-    if (videoFailed) return;
     const video = videoRef.current;
     if (!video) return;
-
     video.muted = true;
-
-    const fail = () => setVideoFailed(true);
     const play = () => {
       void video.play().catch(() => {
-        /* autoplay may be blocked; poster remains */
+        /* autoplay may be blocked until interaction */
       });
     };
-
-    video.addEventListener("error", fail);
-    if (video.error) {
-      fail();
-      return () => video.removeEventListener("error", fail);
-    }
-
     if (video.readyState >= 2) play();
     else video.addEventListener("loadeddata", play, { once: true });
-
-    return () => {
-      video.removeEventListener("error", fail);
-    };
-  }, [videoFailed]);
+  }, []);
 
   return (
     <section className={styles.hero} aria-label="Hero">
       <div className={styles.media}>
-        {videoFailed ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={hero.poster} alt="" />
-        ) : (
-          <video
-            ref={videoRef}
-            className={styles.video}
-            src={hero.media}
-            poster={hero.poster}
-            muted
-            playsInline
-            autoPlay
-            loop
-            preload="auto"
-            controls={false}
-            aria-hidden="true"
-            onError={() => setVideoFailed(true)}
-          />
-        )}
+        <video
+          ref={videoRef}
+          className={styles.video}
+          src={hero.media}
+          muted
+          playsInline
+          autoPlay
+          loop
+          preload="auto"
+          controls={false}
+          aria-hidden="true"
+        />
       </div>
       <a className={styles.session} href={hero.sessionHref}>
         <span>{hero.sessionLabel}</span>
