@@ -21,58 +21,76 @@
   inset: 0;
 }
 
-/* ===== Anclaje compartido =====
-   Punto único (0×0) centrado en el viewport. "Hello." y "WE ARE SKLIO" se
-   posicionan sobre ESTE mismo punto, superpuestos, para que ocupen el mismo
-   anclaje visual y crucen (crossfade) en el mismo lugar, sin salto. */
-.anchor {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2; /* siempre por encima de las imágenes: el texto nunca se oculta */
-}
-
-/* Ambos textos centrados exactamente sobre el punto de anclaje. */
-.anchorText {
+/* ===== Fase 1: "Hello." centrado (mismo punto visual que el lockup) ===== */
+.hello {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
   white-space: nowrap;
-  /* Crossfade sutil y editorial: solo opacidad (sin slide/scale/blur/bounce). */
-  transition: opacity var(--text-fade, 250ms) ease;
-  will-change: opacity;
-}
-
-/* "Hello.": hereda 20/28 + familia editorial (Hiragino → serif) del DS.
-   Excepción local: letter-spacing -6%. */
-.hello {
   letter-spacing: -0.06em;
+  opacity: 0;
+  filter: blur(0);
+  transition:
+    opacity var(--text-fade, 250ms) ease,
+    filter var(--text-fade, 250ms) ease;
+  will-change: opacity, filter;
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* "WE ARE SKLIO": excepción tipográfica local del Loading (Figma 476:5319):
-   Montserrat Medium 500, 20px, line-height normal, -6%, uppercase. */
-.sklio {
-  font-family: var(--font-sans);
-  font-weight: var(--font-weight-medium);
-  font-size: 20px;
-  line-height: normal;
-  letter-spacing: -0.06em;
-  text-transform: uppercase;
+.helloVisible {
+  opacity: 1;
+  filter: blur(0);
 }
 
-/* Tile de imagen (referencia Figma: 109×109, fondo blanco, cover). */
-.tile {
+.helloMorphOut {
+  opacity: 0;
+  filter: blur(6px);
+}
+
+/* ===== Fase 2: lockup fijo [tile] + WE ARE SKLIO (Figma 476:5319) =====
+   Grupo centrado. Una vez visible/settled: sin mover ni re-animar.
+   Solo cambia el src dentro del tile. */
+.lockup {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: var(--tile-size, 109px);
-  height: var(--tile-size, 109px);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  filter: blur(6px);
+  transition:
+    opacity var(--text-fade, 250ms) ease,
+    filter var(--text-fade, 250ms) ease;
+  will-change: opacity, filter;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lockupVisible {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* Tras el morph: sin transición — texto/contenedor quedan estables. */
+.lockupSettled {
+  transition: none;
+  will-change: auto;
+}
+
+/* Tile 109×109 (Figma). Contenedor fijo; solo el src de la imagen loopea. */
+.tile {
+  position: relative;
+  flex-shrink: 0;
+  width: 109px;
+  height: 109px;
   background-color: var(--color-background); /* blanco */
   overflow: hidden;
-  z-index: 1;
 }
 
 .tile img {
@@ -82,54 +100,30 @@
   display: block;
 }
 
-/* Posiciones controladas (desktop). Offsets desde el centro del ancla,
-   manteniendo una zona limpia alrededor del texto. */
-.s1 {
-  transform: translate(calc(-50% - 214.5px), -50%);
-}
-.s2 {
-  transform: translate(calc(-50% + 214.5px), -50%);
-}
-.s3 {
-  transform: translate(calc(-50% - 90px), calc(-50% - 94.5px));
-}
-.s4 {
-  transform: translate(calc(-50% + 90px), calc(-50% + 94.5px));
-}
-.s5 {
-  transform: translate(calc(-50% + 90px), calc(-50% - 94.5px));
-}
-.s6 {
-  transform: translate(calc(-50% - 90px), calc(-50% + 94.5px));
+.sklio {
+  margin: 0;
+  padding: 10px;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium);
+  font-size: 20px;
+  line-height: normal;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  color: inherit;
 }
 
-/* Mobile (0-767): misma secuencia y jerarquía, adaptada al viewport.
-   Tiles más pequeñas y posiciones priorizando arriba/abajo del texto. */
+/* Mobile: same Figma lockup dimensions (109×109 tile, 20px type). */
 @media (max-width: 767px) {
-  .tile {
-    --tile-size: 88px;
-  }
-  .s1 {
-    transform: translate(calc(-50% - 60px), calc(-50% - 110px));
-  }
-  .s2 {
-    transform: translate(calc(-50% + 60px), calc(-50% + 110px));
-  }
-  .s3 {
-    transform: translate(calc(-50% + 60px), calc(-50% - 110px));
-  }
-  .s4 {
-    transform: translate(calc(-50% - 60px), calc(-50% + 110px));
-  }
-  .s5 {
-    transform: translate(-50%, calc(-50% - 110px));
-  }
-  .s6 {
-    transform: translate(-50%, calc(-50% + 110px));
+  .lockup {
+    /* Keep Figma tile size; allow slight horizontal squeeze via scale if needed */
+    max-width: 100%;
   }
 }
 
-/* Reduced motion: sin montaje ni flashes; identidad estática sin transición. */
-.reduced .anchorText {
+/* Reduced motion: sin morph ni loop; identidad estática. */
+.reduced .hello,
+.reduced .lockup {
   transition: none;
+  filter: none;
 }
