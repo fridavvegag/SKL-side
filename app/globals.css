@@ -1,0 +1,237 @@
+/*
+ * Sistema de diseño base (fuente de verdad de estilos)
+ * ----------------------------------------------------
+ * Tokens definidos ÚNICAMENTE con los valores exactos confirmados. No se
+ * inventan valores. Lo que queda pendiente por decisión del autor (spacing
+ * sección-a-sección y controles de selección) NO se define aquí.
+ *
+ * Unidades: px tal como se entregaron (valores de Figma). El letter-spacing
+ * -6% del display se expresa como -0.06em (relativo al tamaño de fuente).
+ */
+
+:root {
+  /* ===== Color ===== */
+  --color-background: #ffffff;
+  --color-text-primary: #000000;
+  --color-text-secondary: #1e1e1e;
+  --color-gray: #929496;
+  --color-disabled: #b7b7b7;
+  --color-error: #dc3328;
+  --color-accent: #e9e778;
+  --color-success: #61dc28;
+  --color-warning: #dcb828;
+
+  /* ===== Tipografía: familias ===== */
+  /* Montserrat (400/500) se carga con next/font y expone --font-montserrat. */
+  --font-sans: var(--font-montserrat), Arial, sans-serif;
+  /* Hiragino Mincho Pro (400), uso solo editorial (cambio de familia). */
+  --font-editorial: "Hiragino Mincho Pro", serif;
+
+  /* ===== Tipografía: pesos ===== */
+  --font-weight-regular: 400; /* body y texto general */
+  --font-weight-medium: 500; /* títulos y headings */
+
+  /* ===== Tipografía: escala (px) ===== */
+  /* Display responsivo: 48/44 (mobile) · 96/80 (tablet) · 128/104 (desktop). */
+  --text-display: 48px; /* base = mobile (0-767) */
+  --leading-display: 44px; /* base = mobile (0-767) */
+  --tracking-display: -0.06em; /* -6% */
+
+  --text-title: 24px;
+  --leading-title: 32px;
+
+  --text-body-large: 20px;
+  --leading-body-large: 28px;
+
+  --text-body: 16px;
+  --leading-body: 20px;
+
+  --text-nav: 12px;
+  --leading-nav: 16px;
+
+  /* Links/botones: tamaños 12, 16 y 24 (coinciden con nav, body y title). */
+  --text-action-sm: 12px;
+  --text-action-md: 16px;
+  --text-action-lg: 24px;
+
+  /* ===== Escala de espaciado ===== */
+  /* Usar SOLO estos valores (salvo lo explícito del diseño, p. ej. gutter 14). */
+  --space-4: 4px; /* incl. separación texto-ícono */
+  --space-8: 8px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --space-72: 72px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-104: 104px;
+  --space-128: 128px;
+
+  /* ===== Radius ===== */
+  --radius: 0; /* border radius = 0 en todo el sistema */
+
+  /* ===== Grid ===== */
+  --grid-columns-desktop: 3;
+  --grid-gutter-desktop: 14px;
+  --grid-margin-desktop: 16px;
+  --grid-columns-tablet: 3;
+  --grid-gutter-tablet: 14px;
+  --grid-margin-tablet: 16px;
+  --grid-columns-mobile: 1;
+  --grid-gutter-mobile: 8px;
+  --grid-margin-mobile: 16px;
+
+  /* ===== Breakpoints ===== */
+  --breakpoint-tablet: 768px; /* tablet: 768-1199 */
+  --breakpoint-desktop: 1200px; /* desktop: 1200+ ; mobile: 0-767 */
+
+  /* ===== Header ===== */
+  --header-height: 40px;
+  --header-padding-x: 16px;
+
+  /* ===== Formulario / preguntas (Book a Session) ===== */
+  --question-padding-y: 40px; /* 40px arriba y abajo por bloque de pregunta */
+  --divider-width: 1px;
+  --divider-color: #b7b7b7;
+}
+
+/* Display responsivo (mobile-first) */
+@media (min-width: 768px) {
+  :root {
+    --text-display: 96px; /* tablet 768-1199 */
+    --leading-display: 80px;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --text-display: 128px; /* desktop 1200+ */
+    --leading-display: 104px;
+  }
+}
+
+/* ==========================================================================
+   Reset estructural mínimo
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: var(--radius); /* 0 en todo el sistema */
+}
+
+* {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+/* Links y botones: solo texto, sin background/container/border/radius.
+   Default #000000, hover accent, disabled #B7B7B7. Ícono opcional a 4px. */
+a,
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+a:hover,
+button:hover {
+  color: var(--color-accent);
+}
+
+a[aria-disabled="true"],
+button:disabled,
+button[aria-disabled="true"] {
+  color: var(--color-disabled);
+  cursor: not-allowed;
+}
+
+/* Formulario: sin caja, sin fondo y sin borde en campos abiertos.
+   Texto ingresado #000000, placeholder con el color de texto gris. */
+input,
+textarea {
+  background: none;
+  border: none;
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-gray);
+}
+
+/* ==========================================================================
+   Roles tipográficos
+   ========================================================================== */
+/* Títulos de página (display) y de sección (title) se muestran SIEMPRE en
+   MAYÚSCULAS de forma visual (text-transform), sin alterar el string real.
+   Regla aplicada SOLO a estos roles de encabezado. */
+.text-display {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium); /* heading */
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  text-transform: uppercase;
+}
+
+.text-title {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-medium); /* heading */
+  font-size: var(--text-title);
+  line-height: var(--leading-title);
+  text-transform: uppercase;
+}
+
+.text-body-large {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-body-large);
+}
+
+.text-body {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+.text-nav {
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-nav);
+  line-height: var(--leading-nav);
+}
+
+/* Voz editorial: solo cambia la familia (y peso 400). Hereda el font-size y
+   line-height del rol con el que se combine (p. ej. .text-body-large.text-editorial). */
+.text-editorial {
+  font-family: var(--font-editorial);
+  font-weight: var(--font-weight-regular);
+}
